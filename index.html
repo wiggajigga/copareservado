@@ -5,12 +5,33 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Copa Reservado Countdown</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            background-color: #f0f0f0;
-            padding: 50px;
+        @font-face {
+            font-family: 'Microgramma';
+            src: url('fonts/Microgramma Normal.ttf') format('truetype');
+            font-weight: normal;
         }
+
+        /* Sentrere alt innhold på siden */
+        body {
+            font-family: 'Microgramma', Arial, sans-serif;
+            font-weight: normal;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+            text-align: center;
+            flex-direction: column;
+        }
+
+        /* Øk størrelsen på overskriften */
+        h1 {
+            font-size: 4em; /* Dobbel størrelse */
+            margin: 0;
+        }
+
+        /* Styling for nedtellingen */
         #countdown {
             font-size: 50px;
             margin-top: 20px;
@@ -18,12 +39,12 @@
     </style>
 </head>
 <body>
-   <h1 style="font-family: 'Microgramma', Arial, sans-serif;">COPA RESERVADO</h1>
-    <p>Marbella</p>
+    <h1>Copa Reservado</h1>
+    <p>Turneringen starter om:</p>
     <div id="countdown"></div>
 
     <script>
-        var countDownDate = new Date("Nov 7, 2024 13:00:00").getTime();
+        var countDownDate = new Date("Nov 1, 2024 09:00:00").getTime();
 
         var countdownfunction = setInterval(function() {
             var now = new Date().getTime();
