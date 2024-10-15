@@ -1,36 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
- <head>
+<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Copa Reservado Countdown</title>
     <style>
-        @font-face {
-            font-family: 'Microgramma';
-            src: url('fonts/Microgramma Normal.ttf') format('truetype');
-            font-weight: normal;
-        }
-
-        /* Sentrere alt innhold horisontalt og vertikalt */
         body {
-            font-family: 'Microgramma', Arial, sans-serif;
-  
-            justify-content: center;
-            align-items: center;
-            height: 50vh;  /* Bruk hele høyden på vinduet */
-            margin: 0;
-            background-color: #f0f0f0;
+            font-family: Arial, sans-serif;
             text-align: center;
-            flex-direction: column;
+            background-color: #f0f0f0;
+            padding: 50px;
         }
-
-        /* Overskriften med Microgramma font */
-        h1 {
-            margin: 0;
-        }
-
-        /* Styling for nedtellingen */
         #countdown {
+            font-size: 50px;
             margin-top: 20px;
         }
     </style>
@@ -41,19 +23,29 @@
     <div id="countdown"></div>
 
     <script>
+        // Sett datoen for nedtelling
         var countDownDate = new Date("Nov 1, 2024 09:00:00").getTime();
 
+        // Oppdater nedtellingen hvert sekund
         var countdownfunction = setInterval(function() {
+
+            // Få dagens dato og tid
             var now = new Date().getTime();
+            
+            // Finn avstanden mellom nå og nedtellingsdatoen
             var distance = countDownDate - now;
+            
+            // Kalkuler tid i dager, timer, minutter og sekunder
             var days = Math.floor(distance / (1000 * 60 * 60 * 24));
             var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
             var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
             var seconds = Math.floor((distance % (1000 * 60)) / 1000);
             
+            // Vis resultatet i elementet med id="countdown"
             document.getElementById("countdown").innerHTML = days + "d " + hours + "h "
             + minutes + "m " + seconds + "s ";
             
+            // Hvis nedtellingen er over, skriv noe annet
             if (distance < 0) {
                 clearInterval(countdownfunction);
                 document.getElementById("countdown").innerHTML = "TURNERINGEN HAR STARTET!";
@@ -61,5 +53,4 @@
         }, 1000);
     </script>
 </body>
-
 </html>
