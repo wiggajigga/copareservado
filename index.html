@@ -10,20 +10,52 @@
             src: url('fonts/Microgramma Normal.ttf') format('truetype');
             font-weight: normal;
         }
-          h1 {
-            font-family: 'Microgramma', Arial, sans-serif;
-            font-size: 50px;
-            margin-top: 20px;
-        } 
+
+        /* Sentrer innholdet horisontalt og vertikalt */
         body {
-            font-family: Arial, sans-serif;
-            text-align: center;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh; /* Tar opp hele høyden på skjermen */
+            margin: 0;
             background-color: #f0f0f0;
-            padding: 50px;
+            text-align: center;
+            flex-direction: column;
+            font-family: Arial, sans-serif;
         }
+
+        /* Font for h1 */
+        h1 {
+            font-family: 'Microgramma', Arial, sans-serif;
+            font-size: 5vw; /* Bruk viewport-bredde for å skalere */
+            margin: 0;
+        }
+
+        /* Styling for nedtellingen */
         #countdown {
-            font-size: 50px;
+            font-size: 4vw; /* Skalerbar nedtellingstekst */
             margin-top: 20px;
+        }
+
+        /* Teksten Marbella under overskriften */
+        p {
+            font-size: 2.5vw; /* Bruk viewport-bredde for skalering */
+            margin: 0;
+        }
+
+        /* Responsiv justering for små skjermer */
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 8vw; /* Øker fontstørrelsen på små skjermer */
+            }
+
+            #countdown {
+                font-size: 6vw; /* Juster nedtellingen for små skjermer */
+            }
+
+            p {
+                font-size: 4vw; /* Juster Marbella-teksten for små skjermer */
+            }
         }
     </style>
 </head>
