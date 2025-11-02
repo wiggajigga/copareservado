@@ -87,61 +87,63 @@ function animateFromTag(name,targetSlot){
 function clearSlots(){ $$('.slot').forEach(s=>{ s.classList.remove('filled'); s.innerHTML='' }) }
 
 // ===== Trekning =====
-function renderResultText(pairs){ $('#announce').textContent=`Trekning klar: Bil 1: ${pairs[0].join(' og ')}, Bil 2: ${pairs[1].join(' og ')}.` }
+// Tidligere skrev vi til #announce her – nå nullstiller vi til no-op
+function renderResultText(/* pairs */){
+  // Bevisst tom: ingen synlig “Trekning klar …”-tekst på siden.
+}
+
 async function animateAssignment(pairs){
   clearSlots();
-  const [p1,p2]=pairs;
-  const s11=$('.slot[data-car="1"][data-slot="1"]');
-  const s12=$('.slot[data-car="1"][data-slot="2"]');
-  const s21=$('.slot[data-car="2"][data-slot="1"]');
-  const s22=$('.slot[data-car="2"][data-slot="2"]');
-  const plan=[[p1[0],s11],[p1[1],s12],[p2[0],s21],[p2[1],s22]];
+  const [p1,p2] = pairs;
+  const s11 = document.querySelector('.slot[data-car="1"][data-slot="1"]');
+  const s12 = document.querySelector('.slot[data-car="1"][data-slot="2"]');
+  const s21 = document.querySelector('.slot[data-car="2"][data-slot="1"]');
+  const s22 = document.querySelector('.slot[data-car="2"][data-slot="2"]');
+  const plan = [[p1[0],s11],[p1[1],s12],[p2[0],s21],[p2[1],s22]];
   for(const [name,slot] of plan){
-    await new Promise(r=>setTimeout(r,90));
+    await new Promise(r=>setTimeout(r, 90));
     /* eslint-disable no-await-in-loop */
-    await animateFromTag(name,slot);
+    await animateFromTag(name, slot);
   }
   confetti();
 }
 
 function draw({forceNewSeed=false}={}){
-  const baseNames=getNames();
-  if(baseNames.length!==4){ alert('Oppgi fire unike navn i URL (&names=) eller bruk standard.'); return; }
+  const baseNames = getNames();
+  if(baseNames.length !== 4){ alert('Oppgi fire unike navn i URL (&names=) eller bruk standard.'); return; }
 
-  // Fyll listen på nytt før hver trekning (så de kan “fjernes” en etter en)
-  renderPlayers(baseNames);
+  renderPlayers(baseNames); // repop før hver trekning
 
-  const sorted=sortNamesStable(baseNames);
-  const combos=combosOfFour(sorted);
+  const sorted  = sortNamesStable(baseNames);
+  const combos  = combosOfFour(sorted);
+  const {seed:seedFromURL} = parseURL();
+  let seed = seedFromURL || (forceNewSeed ? toSeedFromNow() : null);
+  if(!seed) seed = toSeedFromNow();
 
-  const {seed:seedFromURL}=parseURL();
-  let seed=seedFromURL; if(forceNewSeed||!seed) seed=toSeedFromNow();
+  const u = hashToUnit(`${seed}::${sorted.join('|')}`);
+  const idx = Math.floor(u*3);
+  const pairs = combos[idx];
 
-  const u=hashToUnit(`${seed}::${sorted.join('|')}`);
-  const idx=Math.floor(u*3);
-  const pairs=combos[idx];
+  $('#seedInfo').textContent = `Seed: ${seed}`;
+  $('#timeInfo').textContent = `Tidspunkt: ${fmtTime(new Date())}`;
+  $('#shareBtn').disabled = false;
 
-  $('#seedInfo').textContent=`Seed: ${seed}`;
-  $('#timeInfo').textContent=`Tidspunkt: ${fmtTime(new Date())}`;
-  $('#shareBtn').disabled=false;
-
-  animateAssignment(pairs).then(()=>renderResultText(pairs));
+  animateAssignment(pairs).then(()=> renderResultText(pairs)); // no-op
 
   saveState({seed,timestamp:new Date().toISOString(),names:baseNames,sorted,index:idx,pairs});
   return {seed,pairs,idx,sorted};
 }
 
-// Deling
+// Delbar URL (ingen toast/announce – stille)
 async function copyShareURL(){
-  const state=loadState(); const names=state?.names||getNames();
-  const base=`${location.origin}${location.pathname.replace(/\/+$/,'')}`;
-  const url=`${base}?seed=${encodeURIComponent(state?.seed||toSeedFromNow())}&names=${namesToParam(names)}`;
-  try{ await navigator.clipboard.writeText(url) }catch{
+  const state = loadState(); const names = state?.names || getNames();
+  const base  = `${location.origin}${location.pathname.replace(/\/+$/,'')}`;
+  const url   = `${base}?seed=${encodeURIComponent(state?.seed||toSeedFromNow())}&names=${namesToParam(names)}`;
+  try{ await navigator.clipboard.writeText(url); }catch{
     const ta=document.createElement('textarea'); ta.value=url; document.body.appendChild(ta);
-    ta.select(); try{ document.execCommand('copy') }catch{} document.body.removeChild(ta);
+    ta.select(); try{ document.execCommand('copy'); }catch{} document.body.removeChild(ta);
   }
 }
-
 // Init
 function bind(){
   const names=getNames();
