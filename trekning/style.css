@@ -1,55 +1,93 @@
 /* /trekning/style.css */
-/* Hvit, clean. Arver font/typografi fra forsiden. Bevisst minimalt for 100% arv. */
+/* Matcher forsiden: Microgramma for overskrifter/navn, Arial ellers. */
+@font-face{
+  font-family:'Microgramma';
+  src: url('/fonts/Microgramma%20Normal.ttf') format('truetype'),
+       url('../fonts/Microgramma%20Normal.ttf') format('truetype'); /* fallback relativ */
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
 *{box-sizing:border-box}
 html,body{height:100%}
-body{margin:0;background:#fff;color:inherit}
-
+body{
+  margin:0;
+  background:#f0f0f0;       /* samme som forsiden */
+  color:#111;
+  font-family: Arial, sans-serif;
+}
 .container{max-width:980px;margin-inline:auto;padding:24px}
-.page-header{margin-bottom:8px}
 
-.title{display:flex;flex-direction:column;gap:2px;margin:0}
-.title .main{font-size:clamp(28px,4vw,40px);font-weight:800;letter-spacing:.2px}
-.title .sub{font-size:clamp(14px,2vw,16px);text-transform:uppercase;letter-spacing:1.2px;opacity:.65}
-
-/* Spiller-navn – horisontal liste */
-.players{display:flex;gap:10px;flex-wrap:wrap;margin:14px 0 8px}
-.name-tag{
-  display:inline-flex;align-items:center;justify-content:center;
-  min-height:38px;padding:0 14px;border-radius:999px;
-  background:#111;color:#fff;border:1px solid #111;
+/* Tittel i Microgramma, skalerbar som forsiden */
+.title{display:flex;flex-direction:column;gap:2px;margin:0;text-align:left}
+.title .main{
+  font-family:'Microgramma', Arial, sans-serif;
+  font-size:5vw;           /* som forsiden (skalerer med viewport) */
+  margin:0; line-height:1; letter-spacing:.2px;
+}
+.title .sub{
+  font-size:2.5vw;         /* som <p> på forsiden */
+  margin:0; line-height:1.2; opacity:.8;
 }
 
-/* Biler – uten “kort”/rammer, kun lett spacing */
-.cars-wrap{margin:16px 0}
+/* Spiller-navn horisontalt – ren typografi, ingen “chips”-bakgrunn */
+.players{
+  display:flex; gap:18px; flex-wrap:wrap;
+  align-items:center; margin:18px 0 6px;
+}
+.name-tag{
+  font-family:'Microgramma', Arial, sans-serif;
+  text-transform:uppercase; letter-spacing:1px;
+  font-size:clamp(16px,2.4vw,24px);
+  color:#111;
+  border-bottom:2px solid #111; padding-bottom:2px;
+}
+
+/* Biler – minimalistisk, uten rammer */
+.cars-wrap{margin:10px 0 16px}
 .cars{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
-.car-title{margin:0 0 6px 0;font-size:1.15rem;font-weight:700}
+.car-title{
+  font-family:'Microgramma', Arial, sans-serif;
+  text-transform:uppercase; letter-spacing:.8px;
+  margin:0 0 8px 0; font-size:clamp(18px,2.6vw,22px)
+}
 .slots{display:grid;gap:6px}
 .slot{
-  min-height:42px;display:flex;align-items:center;justify-content:flex-start;
-  background:#fafafa;border:1px dashed #dcdcdc;border-radius:10px;padding:6px 8px
+  min-height:38px; display:flex; align-items:center; justify-content:flex-start;
+  background:transparent; border:none; border-radius:0; padding:2px 0;
 }
-.slot.filled{background:#fff;border-style:solid;border-color:#111}
+.slot.filled{background:transparent}
 
-/* Navn i bil */
-.chip{display:inline-flex;align-items:center;justify-content:center;min-height:32px;padding:4px 12px;border-radius:999px;background:#111;color:#fff;border:1px solid #111}
-.chip-final{background:#111;color:#fff;border-color:#111}
+/* Navn i bil (samme uttrykk som name-tag, bare litt mindre) */
+.chip,.chip-final{
+  font-family:'Microgramma', Arial, sans-serif;
+  text-transform:uppercase; letter-spacing:1px;
+  font-size:clamp(16px,2.2vw,22px);
+  color:#111; border-bottom:2px solid #111; padding-bottom:2px;
+}
 
-/* Fly-animasjon */
-.flying{position:fixed;z-index:99;pointer-events:none;will-change:transform,opacity;transition:transform .55s cubic-bezier(.2,.85,.25,1),opacity .55s ease}
+/* Fly-animasjon (posisjonert klon) */
+.flying{
+  position:fixed; z-index:99; pointer-events:none;
+  will-change:transform,opacity;
+  transition:transform .55s cubic-bezier(.2,.85,.25,1), opacity .55s ease;
+  background:transparent; border:none;
+}
 
-/* Knappene nederst */
-.actions{margin:18px 0 8px}
+/* Knapper nederst – samme fargetone som teksten */
+.actions{margin:10px 0 8px}
 .btn-row{display:flex;gap:10px;flex-wrap:wrap}
 .btn{
   background:#111;color:#fff;border:1px solid #111;border-radius:999px;
-  padding:10px 16px;cursor:pointer;letter-spacing:.3px;text-transform:uppercase
+  padding:10px 16px;cursor:pointer;letter-spacing:.3px;text-transform:uppercase;
+  font-family: Arial, sans-serif;
 }
 .btn:hover,.btn:focus{filter:brightness(1.1);outline:2px solid transparent}
 .btn:disabled{opacity:.6;cursor:not-allowed}
 .btn.primary{background:#111;color:#fff}
-
 .meta{margin-top:10px;display:flex;gap:10px;flex-wrap:wrap}
-.muted{opacity:.65}
+.muted{opacity:.7}
 
 /* Tilgjengelighet */
 .visually-hidden{position:absolute!important;height:1px;width:1px;overflow:hidden;clip:rect(1px,1px,1px,1px);white-space:nowrap;border:0;padding:0;margin:-1px}
@@ -57,8 +95,12 @@ body{margin:0;background:#fff;color:inherit}
 .skip-link:focus{left:16px;top:16px;z-index:1000;width:auto;height:auto;padding:8px 12px;background:#111;color:#fff;border-radius:8px}
 :focus-visible{outline:3px solid #8ac6ff;outline-offset:2px}
 
-/* Confetti */
+/* Confetti-canvas */
 #confetti{position:fixed;inset:0;pointer-events:none;z-index:100}
 
-/* Responsiv */
-@media (max-width:520px){.btn-row{flex-direction:column}.btn{width:100%}}
+/* Responsiv justering – behold god lesbarhet på små skjermer */
+@media (max-width:600px){
+  .title .main{font-size:8vw}
+  .title .sub{font-size:4vw}
+  .btn-row{flex-direction:column}.btn{width:100%}
+}
