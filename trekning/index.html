@@ -1,4 +1,4 @@
-<!-- /trekning/index.html -->
+<!-- /trekning/index.html (oppdatert) -->
 <!doctype html>
 <html lang="nb">
 <head>
@@ -10,20 +10,15 @@
 </head>
 <body>
   <main id="app" class="wrap" role="main" aria-labelledby="title">
-    <!-- Tittel (matcher forsiden) -->
     <header class="hero">
       <h1 id="title" class="cr-title">COPA RESERVADO 2025</h1>
       <p class="cr-sub">Trekning dag 1</p>
     </header>
 
-    <!-- Navn horisontalt (Microgramma), ikke-redigerbart -->
     <section aria-label="Spillere">
-      <div id="playersRow" class="players" role="list" aria-label="Spillerliste">
-        <!-- Rendes av JS (standardnavn / ?names=) -->
-      </div>
+      <div id="playersRow" class="players" role="list" aria-label="Spillerliste"></div>
     </section>
 
-    <!-- Bilvisning (uten rammer) -->
     <section class="cars" aria-live="polite" aria-atomic="true">
       <div class="car" id="car1" aria-label="Bil 1">
         <h2 class="car-title">Bil 1</h2>
@@ -39,15 +34,14 @@
           <div class="slot" data-car="2" data-slot="2" aria-label="Plass 2 i bil 2"></div>
         </div>
       </div>
-      <div id="announce" class="visually-hidden" role="status" aria-live="polite"></div>
+      <!-- Fjernet #announce helt -->
     </section>
 
-    <!-- Knapper + info nederst -->
     <section class="actions" aria-label="Handling">
       <div class="btn-row">
-        <button id="drawBtn" type="button" class="btn primary" aria-label="Trekk par">Trekk par</button>
-        <button id="redrawBtn" type="button" class="btn" aria-label="Trekk på nytt">Trekk på nytt</button>
-        <button id="shareBtn" type="button" class="btn" aria-label="Kopier delbar lenke" disabled>Kopier delbar lenke</button>
+        <button id="drawBtn" type="button" class="btn primary">Trekk par</button>
+        <button id="redrawBtn" type="button" class="btn">Trekk på nytt</button>
+        <button id="shareBtn" type="button" class="btn" disabled>Kopier delbar lenke</button>
       </div>
       <div class="meta" aria-live="polite" aria-atomic="true">
         <span id="seedInfo" class="muted"></span>
