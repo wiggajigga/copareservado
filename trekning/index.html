@@ -4,50 +4,45 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Trekning dag 1 – Copa Reservado 2025</title>
+  <title>Copa Reservado 2025 – Trekning dag 1</title>
   <meta name="description" content="Rettferdig trekning av hvem som sitter sammen i golfbiler dag 1." />
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <a class="skip-link" href="#app">Hopp til innhold</a>
-
-  <main id="app" class="container" role="main" aria-labelledby="title">
-    <header class="page-header">
-      <h1 id="title" class="title">
-        <span class="main">Trekning dag 1</span>
-        <span class="sub">Copa Reservado 2025</span>
-      </h1>
+  <main id="app" class="wrap" role="main" aria-labelledby="title">
+    <!-- Tittel (matcher forsiden) -->
+    <header class="hero">
+      <h1 id="title" class="cr-title">COPA RESERVADO 2025</h1>
+      <p class="cr-sub">Trekning dag 1</p>
     </header>
 
-    <!-- Fire navn – horisontalt, ikke-redigerbart -->
+    <!-- Navn horisontalt (Microgramma), ikke-redigerbart -->
     <section aria-label="Spillere">
       <div id="playersRow" class="players" role="list" aria-label="Spillerliste">
-        <!-- Rendes av JS (standardnavn / URL ?names=) -->
+        <!-- Rendes av JS (standardnavn / ?names=) -->
       </div>
     </section>
 
     <!-- Bilvisning (uten rammer) -->
-    <section class="cars-wrap" aria-live="polite" aria-atomic="true">
-      <div class="cars">
-        <div class="car" id="car1" aria-label="Bil 1">
-          <h2 class="car-title">Bil 1</h2>
-          <div class="slots">
-            <div class="slot" data-car="1" data-slot="1" aria-label="Plass 1 i bil 1"></div>
-            <div class="slot" data-car="1" data-slot="2" aria-label="Plass 2 i bil 1"></div>
-          </div>
+    <section class="cars" aria-live="polite" aria-atomic="true">
+      <div class="car" id="car1" aria-label="Bil 1">
+        <h2 class="car-title">Bil 1</h2>
+        <div class="slots">
+          <div class="slot" data-car="1" data-slot="1" aria-label="Plass 1 i bil 1"></div>
+          <div class="slot" data-car="1" data-slot="2" aria-label="Plass 2 i bil 1"></div>
         </div>
-        <div class="car" id="car2" aria-label="Bil 2">
-          <h2 class="car-title">Bil 2</h2>
-          <div class="slots">
-            <div class="slot" data-car="2" data-slot="1" aria-label="Plass 1 i bil 2"></div>
-            <div class="slot" data-car="2" data-slot="2" aria-label="Plass 2 i bil 2"></div>
-          </div>
+      </div>
+      <div class="car" id="car2" aria-label="Bil 2">
+        <h2 class="car-title">Bil 2</h2>
+        <div class="slots">
+          <div class="slot" data-car="2" data-slot="1" aria-label="Plass 1 i bil 2"></div>
+          <div class="slot" data-car="2" data-slot="2" aria-label="Plass 2 i bil 2"></div>
         </div>
       </div>
       <div id="announce" class="visually-hidden" role="status" aria-live="polite"></div>
     </section>
 
-    <!-- Handling nederst -->
+    <!-- Knapper + info nederst -->
     <section class="actions" aria-label="Handling">
       <div class="btn-row">
         <button id="drawBtn" type="button" class="btn primary" aria-label="Trekk par">Trekk par</button>
