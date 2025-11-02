@@ -1,12 +1,11 @@
+<!-- /trekning/index.html -->
 <!doctype html>
 <html lang="nb">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Trekning – Golfbiler dag 1</title>
+  <title>Trekning dag 1 – Copa Reservado 2025</title>
   <meta name="description" content="Rettferdig trekning av hvem som sitter sammen i golfbiler dag 1." />
-
-  <!-- Arver font/farger fra hovedsiden (ingen eksplisitt font settes her) -->
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
@@ -14,28 +13,30 @@
 
   <main id="app" class="container" role="main" aria-labelledby="title">
     <header class="page-header">
-      <h1 id="title">Trekning – Golfbiler dag 1</h1>
-      <p class="lead">
-        Skriv inn (eller behold) fire navn. Trykk <strong>Trekk par</strong> for en rettferdig trekning mellom
-        de tre unike 2-og-2-kombinasjonene. Valgfri <code>?seed=YYYYMMDD</code> i URL gir reproduserbart resultat.
-      </p>
+      <h1 id="title" class="title">
+        <span class="main">Trekning dag 1</span>
+        <span class="sub">Copa Reservado 2025</span>
+      </h1>
     </header>
 
-    <!-- Spillere som chips (horisontalt) -->
+    <!-- Spillere: fire felt horisontalt -->
     <section class="card" aria-label="Spillere">
-      <h2 class="h4">Spillere</h2>
-      <div id="playersRow" class="players" role="list" aria-label="Spillerliste">
-        <!-- Chips rendres fra tekstfeltet (JS) -->
-      </div>
-
-      <div class="form">
-        <label for="names"><strong>Rediger navn</strong> (ett per linje)</label>
-        <textarea id="names" aria-describedby="names-help" rows="4">Mats
-Fredrik
-Trygve
-Knut</textarea>
-        <div id="names-help" class="help">
-          Navn normaliseres (trim, stor forbokstav). Det må være <strong>4 unike</strong> navn.
+      <div class="inputs-row">
+        <div class="field">
+          <label class="visually-hidden" for="n1">Navn 1</label>
+          <input id="n1" type="text" autocomplete="off" value="Mats" />
+        </div>
+        <div class="field">
+          <label class="visually-hidden" for="n2">Navn 2</label>
+          <input id="n2" type="text" autocomplete="off" value="Fredrik" />
+        </div>
+        <div class="field">
+          <label class="visually-hidden" for="n3">Navn 3</label>
+          <input id="n3" type="text" autocomplete="off" value="Trygve" />
+        </div>
+        <div class="field">
+          <label class="visually-hidden" for="n4">Navn 4</label>
+          <input id="n4" type="text" autocomplete="off" value="Knut" />
         </div>
       </div>
 
@@ -51,7 +52,7 @@ Knut</textarea>
       </div>
     </section>
 
-    <!-- Resultat med slots (mål for animasjon) -->
+    <!-- Resultat -->
     <section class="results card" aria-live="polite" aria-atomic="true">
       <h2 class="h4">Resultat</h2>
       <div class="cars">
@@ -75,13 +76,4 @@ Knut</textarea>
 
     <canvas id="confetti" aria-hidden="true"></canvas>
 
-    <noscript><p>Du må aktivere JavaScript for å bruke denne siden.</p></noscript>
-  </main>
-
-  <footer class="footer">
-    <small>Siste trekning lagres lokalt i nettleseren (localStorage). Ingen sporing.</small>
-  </footer>
-
-  <script defer src="app.js"></script>
-</body>
-</html>
+    <noscript><p>Du må aktivere JavaScript for å bruke denne siden.
