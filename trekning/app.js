@@ -1,0 +1,321 @@
+// /trekning/app.js
+
+// ---------- Utils ----------
+const $ = (sel) => document.querySelector(sel);
+const fmtTime = (d) => new Intl.DateTimeFormat('nb-NO', {
+  dateStyle: 'medium', timeStyle: 'short'
+}).format(d);
+
+// Normalize "mats  " -> "Mats", "trYgVE" -> "Trygve"
+function normalizeName(s){
+  return s.trim()
+    .toLowerCase()
+    .split(/\s+/)
+    .map(w => w.charAt(0).toUpperCase() + w.slice(1))
+    .join(' ');
+}
+
+// Extract & sanitize four unique names
+function getNames(){
+  const raw = $('#names').value.split(/\r?\n|,|;/).map(s => s.trim()).filter(Boolean);
+  const normalized = raw.map(normalizeName);
+  // Keep first 4 unique names in order of appearance
+  const uniq = [];
+  for (const n of normalized){ if(!uniq.includes(n)) uniq.push(n); }
+  return uniq.slice(0,4);
+}
+
+// Stable sort for deterministic pairing mapping
+function sortNamesStable(arr){
+  return [...arr].sort((a,b)=> a.localeCompare(b,'nb',{sensitivity:'base'}));
+}
+
+// Compute the three unique pairings for [A,B,C,D]
+function combosOfFour(sorted){
+  if(sorted.length !== 4) throw new Error('Needs exactly 4 names');
+  const [A,B,C,D] = sorted;
+  return [
+    [[A,B],[C,D]],
+    [[A,C],[B,D]],
+    [[A,D],[B,C]],
+  ];
+}
+
+// FNV-1a 32-bit hash -> 0..1 float
+function hashToUnit(seedStr){
+  let h = 0x811c9dc5;
+  for (let i=0; i<seedStr.length; i++){
+    h ^= seedStr.charCodeAt(i);
+    h = (h + ((h<<1) + (h<<4) + (h<<7) + (h<<8) + (h<<24))) >>> 0; // * 16777619
+  }
+  // Convert to unit interval [0, 1)
+  return (h >>> 0) / 2**32;
+}
+
+// Unbiased random int [0, n)
+function cryptoRandInt(n){
+  const buf = new Uint32Array(1);
+  // Rejection sampling avoids modulo bias even for small n
+  const limit = Math.floor(0x100000000 / n) * n;
+  let x;
+  do {
+    crypto.getRandomValues(buf);
+    x = buf[0];
+  } while (x >= limit);
+  return x % n;
+}
+
+// Seed helpers
+function parseURL(){
+  const p = new URLSearchParams(location.search);
+  const seed = p.get('seed') || null;
+  const namesParam = p.get('names'); // optional: ensure perfect reproduction if noen har endret navn
+  return { seed, namesParam };
+}
+
+function toSeedFromNow(){
+  const d = new Date();
+  // YYYYMMDDHHmmss
+  const pad = (n)=> String(n).padStart(2,'0');
+  const seed = [
+    d.getFullYear(),
+    pad(d.getMonth()+1),
+    pad(d.getDate()),
+    pad(d.getHours()),
+    pad(d.getMinutes()),
+    pad(d.getSeconds()),
+  ].join('');
+  return seed;
+}
+
+function namesToParam(names){
+  return encodeURIComponent(names.join(','));
+}
+
+// ---------- Rendering ----------
+function renderResult(pairs){
+  const grid = $('#resultGrid');
+  grid.innerHTML = '';
+  pairs.forEach((pair, idx)=>{
+    const card = document.createElement('div');
+    card.className = 'car';
+    card.setAttribute('aria-label', `Bil ${idx+1}`);
+    const h = document.createElement('h3');
+    h.textContent = `Bil ${idx+1}`;
+    const ul = document.createElement('ul');
+    ul.className = 'list';
+    pair.forEach(n=>{
+      const li = document.createElement('li');
+      li.textContent = n;
+      ul.appendChild(li);
+    });
+    card.appendChild(h);
+    card.appendChild(ul);
+    grid.appendChild(card);
+  });
+
+  // Announce for skjermleser
+  $('#announce').textContent = `Trekning klar: Bil 1: ${pairs[0].join(' og ')}, Bil 2: ${pairs[1].join(' og ')}.`;
+}
+
+// ---------- Confetti (minimal, ingen tunge avhengigheter) ----------
+const confetti = (()=>{
+  const canvas = $('#confetti');
+  const ctx = canvas.getContext('2d');
+  let W=0,H=0, pieces=[], start=0, duration=1400, running=false;
+
+  function resize(){ W = canvas.width = innerWidth; H = canvas.height = innerHeight; }
+  addEventListener('resize', resize); resize();
+
+  function spawn(n=80){
+    pieces = Array.from({length:n}, ()=>({
+      x: Math.random()*W,
+      y: -20 - Math.random()*H*0.3,
+      r: 3 + Math.random()*4,
+      vx: (Math.random()-0.5)*1.2,
+      vy: 1.5 + Math.random()*2.4,
+      rot: Math.random()*Math.PI,
+      vr: (Math.random()-0.5)*0.2
+    }));
+  }
+
+  function step(ts){
+    if(!start) start = ts;
+    const t = ts - start;
+    ctx.clearRect(0,0,W,H);
+    for(const p of pieces){
+      p.x += p.vx;
+      p.y += p.vy;
+      p.rot += p.vr;
+      // simple gravity
+      p.vy += 0.02;
+      ctx.save();
+      ctx.translate(p.x, p.y);
+      ctx.rotate(p.rot);
+      ctx.fillStyle = `hsl(${(p.x/W)*360}, 85%, 60%)`;
+      ctx.fillRect(-p.r, -p.r, p.r*2, p.r*2);
+      ctx.restore();
+    }
+    if(t < duration){
+      running = true;
+      requestAnimationFrame(step);
+    }else{
+      running = false;
+      ctx.clearRect(0,0,W,H);
+      start = 0;
+    }
+  }
+
+  return function trigger(){
+    spawn();
+    if(!running) requestAnimationFrame(step);
+  };
+})();
+
+// ---------- LocalStorage ----------
+const STORAGE_KEY = 'trekningDag1';
+
+function saveState(state){
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch {}
+}
+
+function loadState(){
+  try {
+    const s = localStorage.getItem(STORAGE_KEY);
+    return s ? JSON.parse(s) : null;
+  } catch { return null; }
+}
+
+// ---------- Core draw ----------
+function draw({forceNewSeed=false}={}){
+  const names = getNames();
+  if(names.length !== 4){
+    alert('Du må oppgi nøyaktig fire unike navn.');
+    return;
+  }
+  const normalized = names.map(normalizeName);
+  const sorted = sortNamesStable(normalized);
+  const allCombos = combosOfFour(sorted);
+
+  // Decide seed
+  const url = parseURL();
+  let seed = url.seed;
+  if(forceNewSeed || !seed){
+    seed = toSeedFromNow(); // generer fersk seed
+  }
+
+  // Map seed -> index 0..2 uten bias
+  const u = hashToUnit(`${seed}::${sorted.join('|')}`);
+  const idx = Math.floor(u * 3); // 0,1,2 uniform
+
+  const pairs = allCombos[idx];
+
+  // Render + meta
+  renderResult(pairs);
+  $('#seedInfo').textContent = `Seed: ${seed}`;
+  const now = new Date();
+  $('#timeInfo').textContent = `Tidspunkt: ${fmtTime(now)}`;
+  $('#shareBtn').disabled = false;
+
+  // Confetti
+  confetti();
+
+  // Persist
+  saveState({
+    seed, timestamp: now.toISOString(),
+    names: normalized, sorted, index: idx, pairs
+  });
+
+  // Log rettferdighets-sjekk hint
+  console.info('Rettferdighets-sjekk: kall window.__fairnessTest(60000) for en kort Monte Carlo-verifisering.');
+  return {seed, pairs, idx, sorted};
+}
+
+// ---------- Share URL ----------
+async function copyShareURL(){
+  const state = loadState();
+  if(!state){ return; }
+  const base = `${location.origin}${location.pathname.replace(/\/+$/,'')}`;
+  const url = `${base}?seed=${encodeURIComponent(state.seed)}&names=${namesToParam(state.names)}`;
+  try{
+    await navigator.clipboard.writeText(url);
+    announce('Delbar lenke kopiert til utklippstavlen.');
+  }catch{
+    // Fallback
+    const ta = document.createElement('textarea');
+    ta.value = url; document.body.appendChild(ta); ta.select();
+    try{ document.execCommand('copy'); }catch{}
+    document.body.removeChild(ta);
+    announce('Lenke kopiert (fallback).');
+  }
+}
+
+function announce(msg){
+  const el = $('#announce');
+  el.textContent = msg;
+  // Visuelt hint for tastaturnavigasjon
+  $('#shareBtn').setAttribute('title', msg);
+  setTimeout(()=>$('#shareBtn').removeAttribute('title'), 2000);
+}
+
+// ---------- Event wiring ----------
+function bind(){
+  $('#drawBtn').addEventListener('click', ()=> draw({forceNewSeed:false}));
+  $('#redrawBtn').addEventListener('click', ()=> draw({forceNewSeed:true}));
+  $('#shareBtn').addEventListener('click', copyShareURL);
+
+  // Enter i textarea skal ikke submitte noe; bruk knappen.
+  $('#names').addEventListener('blur', ()=> {
+    // Normalize textarea visningen lett (trim linjer)
+    const lines = $('#names').value.split(/\r?\n|,|;/).map(s=>normalizeName(s)).filter(Boolean);
+    $('#names').value = lines.join('\n');
+  });
+
+  // Initial visning:
+  const { seed, namesParam } = parseURL();
+  if(namesParam){
+    const fromURL = decodeURIComponent(namesParam).split(',').map(normalizeName).filter(Boolean);
+    if(fromURL.length === 4){
+      $('#names').value = fromURL.join('\n');
+    }
+  }
+  if(seed){
+    draw({forceNewSeed:false}); // reproduser basert på seed + navnene
+  }else{
+    const last = loadState();
+    if(last){
+      // Vis forrige resultat uten å endre URL
+      renderResult(last.pairs);
+      $('#seedInfo').textContent = `Seed: ${last.seed}`;
+      $('#timeInfo').textContent = `Tidspunkt: ${fmtTime(new Date(last.timestamp))}`;
+      $('#shareBtn').disabled = false;
+    }
+  }
+}
+
+// ---------- Fairness: Monte Carlo demo i konsollen ----------
+window.__fairnessTest = function(trials=60000){
+  const names = getNames();
+  if(names.length !== 4){
+    console.warn('Rettferdighets-sjekk: trenger 4 navn i feltet.');
+    return;
+  }
+  const sorted = sortNamesStable(names.map(normalizeName));
+  const counts = [0,0,0];
+  for(let i=0;i<trials;i++){
+    const seed = String(i); // deterministisk og rask
+    const u = hashToUnit(`${seed}::${sorted.join('|')}`);
+    const idx = Math.floor(u*3);
+    counts[idx]++;
+  }
+  const pct = counts.map(c => (100*c/trials).toFixed(2)+'%');
+  console.log(`Fordeling over ${trials} trekk:`, counts, pct);
+  // En enkel chi-kvadratindikator (for n=3 kategorier):
+  const exp = trials/3;
+  const chi = counts.reduce((s,c)=> s + ((c-exp)**2)/exp, 0);
+  console.log('Chi-kvadrat (df=2):', chi.toFixed(3), '(lav verdi ~ jevn fordeling)');
+  return {counts, pct, chi};
+};
+
+// ---------- Init ----------
+document.addEventListener('DOMContentLoaded', bind);
