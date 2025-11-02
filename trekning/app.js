@@ -184,4 +184,96 @@ function draw({forceNewSeed=false}={}){
   // UI updates
   $('#seedInfo').textContent = `Seed: ${seed}`;
   const now = new Date();
-  $('#timeIn
+  $('#timeInfo').textContent = `Tidspunkt: ${fmtTime(now)}`;
+  $('#shareBtn').disabled = false;
+
+  // animasjon + tekst
+  animateAssignment(pairs).then(()=> renderResultText(pairs));
+
+  // persist
+  saveState({seed, timestamp: now.toISOString(), names: normalized, sorted, index: idx, pairs});
+
+  // Konsoll-test
+  console.info('Rettferdighets-sjekk: window.__fairnessTest(60000)');
+  return {seed, pairs, idx, sorted};
+}
+
+// Delbar URL
+async function copyShareURL(){
+  const state = loadState();
+  if(!state) return;
+  const base = `${location.origin}${location.pathname.replace(/\/+$/,'')}`;
+  const url = `${base}?seed=${encodeURIComponent(state.seed)}&names=${namesToParam(state.names)}`;
+  try{
+    await navigator.clipboard.writeText(url);
+    const el = $('#announce'); el.textContent = 'Delbar lenke kopiert til utklippstavlen.';
+  }catch{
+    const ta = document.createElement('textarea'); ta.value = url;
+    document.body.appendChild(ta); ta.select(); try{ document.execCommand('copy'); }catch{}
+    document.body.removeChild(ta);
+  }
+}
+
+// Init
+function bind(){
+  $('#drawBtn').addEventListener('click', ()=> draw({forceNewSeed:false}));
+  $('#redrawBtn').addEventListener('click', ()=> draw({forceNewSeed:true}));
+  $('#shareBtn').addEventListener('click', copyShareURL);
+
+  // Synk chips når navn endres
+  const syncChips = ()=>{
+    const names = getNames();
+    if(names.length >= 1){ renderPlayersChips(names); }
+  };
+  $('#names').addEventListener('input', syncChips);
+  $('#names').addEventListener('blur', ()=>{
+    const lines = $('#names').value.split(/\r?\n|,|;/).map(s=>normalizeName(s)).filter(Boolean);
+    $('#names').value = lines.join('\n');
+    syncChips();
+  });
+
+  // Første visning
+  const { seed, namesParam } = parseURL();
+  if(namesParam){
+    const fromURL = decodeURIComponent(namesParam).split(',').map(normalizeName).filter(Boolean);
+    if(fromURL.length === 4){ $('#names').value = fromURL.join('\n'); }
+  }
+
+  // Render chips av initiale navn
+  renderPlayersChips(getNames());
+
+  if(seed){
+    draw({forceNewSeed:false}); // reproduser hvis seed i URL
+  }else{
+    const last = loadState();
+    if(last){
+      // Vis forrige resultat i slots + chips
+      renderPlayersChips(last.names);
+      animateAssignment(last.pairs).then(()=> renderResultText(last.pairs));
+      $('#seedInfo').textContent = `Seed: ${last.seed}`;
+      $('#timeInfo').textContent = `Tidspunkt: ${fmtTime(new Date(last.timestamp))}`;
+      $('#shareBtn').disabled = false;
+    }
+  }
+}
+
+// Monte Carlo (konsoll)
+window.__fairnessTest = function(trials=60000){
+  const names = getNames();
+  if(names.length!==4){ console.warn('Rettferdighets-sjekk: trenger 4 navn.'); return; }
+  const sorted = sortNamesStable(names.map(normalizeName));
+  const counts = [0,0,0];
+  for(let i=0;i<trials;i++){
+    const seed = String(i);
+    const u = hashToUnit(`${seed}::${sorted.join('|')}`);
+    const idx = Math.floor(u*3);
+    counts[idx]++;
+  }
+  const pct = counts.map(c => (100*c/trials).toFixed(2)+'%');
+  const exp = trials/3;
+  const chi = counts.reduce((s,c)=> s + ((c-exp)**2)/exp, 0);
+  console.log(`Fordeling over ${trials} trekk:`, counts, pct, 'chi2=', chi.toFixed(3));
+  return {counts, pct, chi};
+};
+
+document.addEventListener('DOMContentLoaded', bind);
