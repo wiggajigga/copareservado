@@ -9,7 +9,10 @@ const DEFAULT_NAMES = ['Mats','Fredrik','Trygve','Knut'];
 function normalizeName(s){
   return s.trim().toLowerCase().split(/\s+/).map(w=>w.charAt(0).toUpperCase()+w.slice(1)).join(' ');
 }
-function parseURL(){ const p=new URLSearchParams(location.search); return {seed:p.get('seed')||null, namesParam:p.get('names')}; }
+function parseURL(){
+  const p=new URLSearchParams(location.search);
+  return {seed:p.get('seed')||null, namesParam:p.get('names')};
+}
 function getNames(){
   const { namesParam } = parseURL();
   if(namesParam){
@@ -29,7 +32,6 @@ function combosOfFour(sorted){
     [[A,D],[B,C]],
   ];
 }
-// Hash -> [0,1)
 function hashToUnit(seedStr){
   let h=0x811c9dc5;
   for(let i=0;i<seedStr.length;i++){
@@ -44,17 +46,17 @@ function toSeedFromNow(){
 }
 function namesToParam(names){ return encodeURIComponent(names.join(',')); }
 
-// ===== Render navn (horisontalt) =====
+// ===== Render spillere =====
 function renderPlayers(names){
   const row = $('#playersRow'); row.innerHTML='';
   names.forEach(n=>{
     const tag=document.createElement('span');
-    tag.className='name-tag'; tag.setAttribute('role','listitem'); tag.textContent=n;
+    tag.className='name-tag'; tag.setAttribute('role','listitem'); tag.textContent=n.toUpperCase();
     row.appendChild(tag);
   });
 }
 
-// ===== Confetti =====
+// ===== Confetti (lett) =====
 const confetti = (()=>{
   const canvas = $('#confetti'); const ctx = canvas.getContext('2d');
   let W=0,H=0,pieces=[],start=0,duration=1400,running=false;
@@ -73,7 +75,7 @@ const confetti = (()=>{
     for(const p of pieces){
       p.x+=p.vx; p.y+=p.vy; p.rot+=p.vr; p.vy+=0.02;
       ctx.save(); ctx.translate(p.x,p.y); ctx.rotate(p.rot);
-      ctx.fillStyle=`hsl(${(p.x/W)*360},85%,50%)`;
+      ctx.fillStyle=`hsl(${(p.x/W)*360}, 85%, 50%)`;
       ctx.fillRect(-p.r,-p.r,p.r*2,p.r*2);
       ctx.restore();
     }
@@ -88,16 +90,16 @@ const STORAGE_KEY='trekningDag1';
 function saveState(state){ try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }catch{} }
 function loadState(){ try{ const s=localStorage.getItem(STORAGE_KEY); return s?JSON.parse(s):null; }catch{ return null; } }
 
-// ===== Anim — fra name-tag til slot =====
+// ===== Animasjon (fra navn til slot) =====
 function rect(el){ return el.getBoundingClientRect(); }
 function makeFlyingTag(fromRect,text){
   const chip=document.createElement('span');
-  chip.className='chip flying'; chip.textContent=text;
+  chip.className='chip flying'; chip.textContent=text.toUpperCase();
   Object.assign(chip.style,{left:`${fromRect.left}px`,top:`${fromRect.top}px`,width:`${fromRect.width}px`,height:`${fromRect.height}px`});
   document.body.appendChild(chip); return chip;
 }
 function animateFromTag(name,targetSlot){
-  const tag=$$('#playersRow .name-tag').find(el=>el.textContent===name);
+  const tag=$$('#playersRow .name-tag').find(el=>el.textContent.toLowerCase()===name.toLowerCase());
   if(!tag||!targetSlot) return Promise.resolve();
   const from=rect(tag), to=rect(targetSlot);
   const dx=(to.left+to.width/2)-(from.left+from.width/2);
@@ -107,7 +109,7 @@ function animateFromTag(name,targetSlot){
   return new Promise(res=>{
     clone.addEventListener('transitionend',()=>{
       clone.remove(); targetSlot.classList.add('filled'); targetSlot.innerHTML='';
-      const final=document.createElement('span'); final.className='chip chip-final'; final.textContent=name;
+      const final=document.createElement('span'); final.className='chip-final'; final.textContent=name.toUpperCase();
       targetSlot.appendChild(final); res();
     },{once:true});
   });
@@ -157,7 +159,7 @@ function draw({forceNewSeed=false}={}){
   return {seed,pairs,idx,sorted};
 }
 
-// Delbar URL (inkluderer names hvis fra URL, ellers default)
+// Delbar URL
 async function copyShareURL(){
   const state=loadState(); const names=state?.names||getNames();
   const base=`${location.origin}${location.pathname.replace(/\/+$/,'')}`;
