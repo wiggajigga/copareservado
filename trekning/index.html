@@ -6,6 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Trekning dag 1 – Copa Reservado 2025</title>
   <meta name="description" content="Rettferdig trekning av hvem som sitter sammen i golfbiler dag 1." />
+  <!-- Arver font/farger fra hovedsiden (ingen eksplisitt font her) -->
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
@@ -19,52 +20,25 @@
       </h1>
     </header>
 
-    <!-- Spillere: fire felt horisontalt -->
-    <section class="card" aria-label="Spillere">
-      <div class="inputs-row">
-        <div class="field">
-          <label class="visually-hidden" for="n1">Navn 1</label>
-          <input id="n1" type="text" autocomplete="off" value="Mats" />
-        </div>
-        <div class="field">
-          <label class="visually-hidden" for="n2">Navn 2</label>
-          <input id="n2" type="text" autocomplete="off" value="Fredrik" />
-        </div>
-        <div class="field">
-          <label class="visually-hidden" for="n3">Navn 3</label>
-          <input id="n3" type="text" autocomplete="off" value="Trygve" />
-        </div>
-        <div class="field">
-          <label class="visually-hidden" for="n4">Navn 4</label>
-          <input id="n4" type="text" autocomplete="off" value="Knut" />
-        </div>
-      </div>
-
-      <div class="btn-row">
-        <button id="drawBtn" type="button" class="btn primary" aria-label="Trekk par">Trekk par</button>
-        <button id="redrawBtn" type="button" class="btn" aria-label="Trekk på nytt">Trekk på nytt</button>
-        <button id="shareBtn" type="button" class="btn" aria-label="Kopier delbar lenke" disabled>Kopier delbar lenke</button>
-      </div>
-
-      <div class="meta" aria-live="polite" aria-atomic="true">
-        <span id="seedInfo" class="pill" title="Seed brukt i denne trekningen"></span>
-        <span id="timeInfo" class="muted"></span>
+    <!-- Fire navn – horisontalt, ikke-redigerbart -->
+    <section aria-label="Spillere">
+      <div id="playersRow" class="players" role="list" aria-label="Spillerliste">
+        <!-- Rendes av JS fra default/URL -->
       </div>
     </section>
 
-    <!-- Resultat -->
-    <section class="results card" aria-live="polite" aria-atomic="true">
-      <h2 class="h4">Resultat</h2>
+    <!-- Bilvisning uten rammer/kort -->
+    <section class="cars-wrap" aria-live="polite" aria-atomic="true">
       <div class="cars">
         <div class="car" id="car1" aria-label="Bil 1">
-          <h3>Bil 1</h3>
+          <h2 class="car-title">Bil 1</h2>
           <div class="slots">
             <div class="slot" data-car="1" data-slot="1" aria-label="Plass 1 i bil 1"></div>
             <div class="slot" data-car="1" data-slot="2" aria-label="Plass 2 i bil 1"></div>
           </div>
         </div>
         <div class="car" id="car2" aria-label="Bil 2">
-          <h3>Bil 2</h3>
+          <h2 class="car-title">Bil 2</h2>
           <div class="slots">
             <div class="slot" data-car="2" data-slot="1" aria-label="Plass 1 i bil 2"></div>
             <div class="slot" data-car="2" data-slot="2" aria-label="Plass 2 i bil 2"></div>
@@ -74,14 +48,22 @@
       <div id="announce" class="visually-hidden" role="status" aria-live="polite"></div>
     </section>
 
-    <canvas id="confetti" aria-hidden="true"></canvas>
+    <!-- Handling nederst -->
+    <section class="actions" aria-label="Handling">
+      <div class="btn-row">
+        <button id="drawBtn" type="button" class="btn primary" aria-label="Trekk par">Trekk par</button>
+        <button id="redrawBtn" type="button" class="btn" aria-label="Trekk på nytt">Trekk på nytt</button>
+        <button id="shareBtn" type="button" class="btn" aria-label="Kopier delbar lenke" disabled>Kopier delbar lenke</button>
+      </div>
+      <div class="meta" aria-live="polite" aria-atomic="true">
+        <span id="seedInfo" class="muted"></span>
+        <span id="timeInfo" class="muted"></span>
+      </div>
+    </section>
 
+    <canvas id="confetti" aria-hidden="true"></canvas>
     <noscript><p>Du må aktivere JavaScript for å bruke denne siden.</p></noscript>
   </main>
-
-  <footer class="footer">
-    <small>Siste trekning lagres lokalt i nettleseren (localStorage). Ingen sporing.</small>
-  </footer>
 
   <script defer src="app.js"></script>
 </body>
