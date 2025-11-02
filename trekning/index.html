@@ -1,0 +1,68 @@
+<!-- /trekning/index.html -->
+<!doctype html>
+<html lang="nb">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Trekning – Golfbiler dag 1</title>
+  <meta name="description" content="Rettferdig trekning av hvem som sitter sammen i golfbiler dag 1." />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <a class="skip-link" href="#app">Hopp til innhold</a>
+
+  <main id="app" class="container" role="main" aria-labelledby="title">
+    <header>
+      <h1 id="title">Trekning – Golfbiler dag 1</h1>
+      <p class="lead">
+        Denne siden trekker <strong>rettferdig</strong> mellom de tre unike 2-og-2-kombinasjonene for fire spillere.
+        Du kan bruke en valgfri <code>seed</code> i URL (<kbd>?seed=YYYYMMDD</kbd>) for reproduserbar trekning.
+      </p>
+    </header>
+
+    <section class="card">
+      <form id="form" aria-label="Trekning av par">
+        <label for="names"><strong>Navn</strong> (ett per linje)</label>
+        <textarea id="names" aria-describedby="names-help" rows="4">Mats
+Fredrik
+Trygve
+Knut</textarea>
+        <div id="names-help" class="help">
+          Tips: Navn normaliseres (trim, stor forbokstav). Det må være <strong>nøyaktig fire</strong> unike navn.
+        </div>
+
+        <div class="btn-row">
+          <button id="drawBtn" type="button" class="btn primary" aria-label="Trekk par">Trekk par</button>
+          <button id="redrawBtn" type="button" class="btn" aria-label="Trekk på nytt">Trekk på nytt</button>
+          <button id="shareBtn" type="button" class="btn" aria-label="Kopier delbar lenke" disabled>Kopier delbar lenke</button>
+        </div>
+
+        <div class="meta" aria-live="polite" aria-atomic="true">
+          <span id="seedInfo" class="pill" title="Seed brukt i denne trekningen"></span>
+          <span id="timeInfo" class="muted"></span>
+        </div>
+      </form>
+    </section>
+
+    <section class="results card" aria-live="polite" aria-atomic="true">
+      <h2 class="h4">Resultat</h2>
+      <div id="resultGrid" class="grid">
+        <!-- Bil-kort rendres her -->
+      </div>
+      <div id="announce" class="visually-hidden" role="status" aria-live="polite"></div>
+    </section>
+
+    <canvas id="confetti" aria-hidden="true"></canvas>
+
+    <noscript>
+      <p>Du må aktivere JavaScript for å bruke denne siden.</p>
+    </noscript>
+  </main>
+
+  <footer class="footer">
+    <small>Data om siste trekning lagres lokalt i nettleseren (localStorage). Ingen sporing eller eksterne tredjeparts-biblioteker.</small>
+  </footer>
+
+  <script defer src="app.js"></script>
+</body>
+</html>
