@@ -1,3 +1,4 @@
+// /trekning/app.js
 // ===== Utils =====
 const $ = (sel) => document.querySelector(sel);
 const $$ = (sel) => Array.from(document.querySelectorAll(sel));
@@ -6,11 +7,11 @@ const fmtTime = (d) => new Intl.DateTimeFormat('nb-NO',{dateStyle:'medium',timeS
 function normalizeName(s){
   return s.trim().toLowerCase().split(/\s+/).map(w=>w.charAt(0).toUpperCase()+w.slice(1)).join(' ');
 }
+function getInputs(){ return ['#n1','#n2','#n3','#n4'].map(id=>$(id)); }
 function getNames(){
-  const raw = $('#names').value.split(/\r?\n|,|;/).map(s=>s.trim()).filter(Boolean);
-  const normalized = raw.map(normalizeName);
+  const vals = getInputs().map(i => normalizeName(i.value)).filter(Boolean);
   const uniq = [];
-  for(const n of normalized){ if(!uniq.includes(n)) uniq.push(n); }
+  for(const n of vals){ if(!uniq.includes(n)) uniq.push(n); }
   return uniq.slice(0,4);
 }
 function sortNamesStable(arr){ return [...arr].sort((a,b)=>a.localeCompare(b,'nb',{sensitivity:'base'})); }
@@ -34,27 +35,13 @@ function hashToUnit(seedStr){
   return (h>>>0)/2**32;
 }
 
-// Seed
+// Seed & URL
 function parseURL(){ const p=new URLSearchParams(location.search); return {seed:p.get('seed')||null, namesParam:p.get('names')}; }
 function toSeedFromNow(){
   const d=new Date(), pad=(n)=>String(n).padStart(2,'0');
   return [d.getFullYear(),pad(d.getMonth()+1),pad(d.getDate()),pad(d.getHours()),pad(d.getMinutes()),pad(d.getSeconds())].join('');
 }
 function namesToParam(names){ return encodeURIComponent(names.join(',')); }
-
-// ===== Rendering players (chips) =====
-function renderPlayersChips(names){
-  const row = $('#playersRow');
-  row.innerHTML = '';
-  names.forEach(n=>{
-    const chip = document.createElement('span');
-    chip.className = 'chip';
-    chip.setAttribute('role','listitem');
-    chip.setAttribute('tabindex','0');
-    chip.textContent = n;
-    row.appendChild(chip);
-  });
-}
 
 // ===== Confetti =====
 const confetti = (()=>{
@@ -90,31 +77,29 @@ const STORAGE_KEY='trekningDag1';
 function saveState(state){ try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }catch{} }
 function loadState(){ try{ const s=localStorage.getItem(STORAGE_KEY); return s?JSON.parse(s):null; }catch{ return null; } }
 
-// ===== Animation helpers (chips fly til slots) =====
+// ===== Animation (fra input-felt til slot) =====
 function rect(el){ return el.getBoundingClientRect(); }
-function makeFlyingClone(fromEl){
-  const r = rect(fromEl);
-  const clone = fromEl.cloneNode(true);
-  clone.classList.add('flying');
-  Object.assign(clone.style, {left:`${r.left}px`, top:`${r.top}px`, width:`${r.width}px`, height:`${r.height}px`});
-  document.body.appendChild(clone);
-  return clone;
-}
-function animateChipToSlot(name, targetSlot){
-  const chip = $$('#playersRow .chip').find(c => c.textContent === name);
-  if(!chip || !targetSlot) return Promise.resolve();
-  const clone = makeFlyingClone(chip);
-  const tr = rect(targetSlot);
-  const from = rect(clone);
-  const dx = (tr.left + tr.width/2) - (from.left + from.width/2);
-  const dy = (tr.top + tr.height/2) - (from.top + from.height/2);
-
-  // start
-  requestAnimationFrame(()=>{
-    clone.style.transform = `translate(${dx}px, ${dy}px) scale(1.0)`;
-    clone.style.opacity = '0.95';
+function makeFlyingChip(fromRect, text){
+  const chip = document.createElement('span');
+  chip.className = 'chip flying';
+  chip.textContent = text;
+  Object.assign(chip.style, {
+    left:`${fromRect.left}px`, top:`${fromRect.top}px`,
+    width:`${fromRect.width}px`, height:`${fromRect.height}px`
   });
-
+  document.body.appendChild(chip);
+  return chip;
+}
+function animateFromInput(name, targetSlot){
+  const inputs = getInputs();
+  const src = inputs.find(i => normalizeName(i.value) === name);
+  if(!src || !targetSlot) return Promise.resolve();
+  const from = rect(src);
+  const to = rect(targetSlot);
+  const dx = (to.left + to.width/2) - (from.left + from.width/2);
+  const dy = (to.top + to.height/2) - (from.top + from.height/2);
+  const clone = makeFlyingChip(from, name);
+  requestAnimationFrame(()=>{ clone.style.transform = `translate(${dx}px, ${dy}px)`; clone.style.opacity='0.95'; });
   return new Promise(res=>{
     clone.addEventListener('transitionend', ()=>{
       clone.remove();
@@ -128,47 +113,34 @@ function animateChipToSlot(name, targetSlot){
     }, {once:true});
   });
 }
-
-function clearSlots(){
-  $$('.slot').forEach(s=>{
-    s.classList.remove('filled');
-    s.innerHTML = ''; // reset til tom “plass-holder”
-  });
-}
+function clearSlots(){ $$('.slot').forEach(s=>{ s.classList.remove('filled'); s.innerHTML=''; }); }
 
 // ===== Core draw =====
 function renderResultText(pairs){
   $('#announce').textContent = `Trekning klar: Bil 1: ${pairs[0].join(' og ')}, Bil 2: ${pairs[1].join(' og ')}.`;
 }
-
 async function animateAssignment(pairs){
   clearSlots();
-  // Map navn -> target slot DOM
-  const targetMap = new Map();
-  const [p1, p2] = pairs;
+  const [p1,p2] = pairs;
   const s11 = document.querySelector('.slot[data-car="1"][data-slot="1"]');
   const s12 = document.querySelector('.slot[data-car="1"][data-slot="2"]');
   const s21 = document.querySelector('.slot[data-car="2"][data-slot="1"]');
   const s22 = document.querySelector('.slot[data-car="2"][data-slot="2"]');
-
-  targetMap.set(p1[0], s11);
-  targetMap.set(p1[1], s12);
-  targetMap.set(p2[0], s21);
-  targetMap.set(p2[1], s22);
-
-  // Animer i rekkefølge for litt “show”
-  for(const name of [p1[0], p1[1], p2[0], p2[1]]){
-    // legg inn en liten delay mellom flyvninger
-    /* eslint-disable no-await-in-loop */
+  const plan = [
+    [p1[0], s11], [p1[1], s12],
+    [p2[0], s21], [p2[1], s22],
+  ];
+  for(const [name, slot] of plan){
     await new Promise(r=>setTimeout(r, 90));
-    await animateChipToSlot(name, targetMap.get(name));
+    /* eslint-disable no-await-in-loop */
+    await animateFromInput(name, slot);
   }
   confetti();
 }
 
 function draw({forceNewSeed=false}={}){
   const names = getNames();
-  if(names.length !== 4){ alert('Du må oppgi nøyaktig fire unike navn.'); return; }
+  if(names.length !== 4){ alert('Oppgi fire unike navn.'); return; }
   const normalized = names.map(normalizeName);
   const sorted = sortNamesStable(normalized);
   const combos = combosOfFour(sorted);
@@ -181,19 +153,14 @@ function draw({forceNewSeed=false}={}){
   const idx = Math.floor(u*3);
   const pairs = combos[idx];
 
-  // UI updates
   $('#seedInfo').textContent = `Seed: ${seed}`;
   const now = new Date();
   $('#timeInfo').textContent = `Tidspunkt: ${fmtTime(now)}`;
   $('#shareBtn').disabled = false;
 
-  // animasjon + tekst
   animateAssignment(pairs).then(()=> renderResultText(pairs));
 
-  // persist
   saveState({seed, timestamp: now.toISOString(), names: normalized, sorted, index: idx, pairs});
-
-  // Konsoll-test
   console.info('Rettferdighets-sjekk: window.__fairnessTest(60000)');
   return {seed, pairs, idx, sorted};
 }
@@ -204,13 +171,10 @@ async function copyShareURL(){
   if(!state) return;
   const base = `${location.origin}${location.pathname.replace(/\/+$/,'')}`;
   const url = `${base}?seed=${encodeURIComponent(state.seed)}&names=${namesToParam(state.names)}`;
-  try{
-    await navigator.clipboard.writeText(url);
-    const el = $('#announce'); el.textContent = 'Delbar lenke kopiert til utklippstavlen.';
-  }catch{
-    const ta = document.createElement('textarea'); ta.value = url;
-    document.body.appendChild(ta); ta.select(); try{ document.execCommand('copy'); }catch{}
-    document.body.removeChild(ta);
+  try{ await navigator.clipboard.writeText(url); $('#announce').textContent='Delbar lenke kopiert.'; }
+  catch{
+    const ta=document.createElement('textarea'); ta.value=url; document.body.appendChild(ta);
+    ta.select(); try{ document.execCommand('copy'); }catch{} document.body.removeChild(ta);
   }
 }
 
@@ -220,35 +184,21 @@ function bind(){
   $('#redrawBtn').addEventListener('click', ()=> draw({forceNewSeed:true}));
   $('#shareBtn').addEventListener('click', copyShareURL);
 
-  // Synk chips når navn endres
-  const syncChips = ()=>{
-    const names = getNames();
-    if(names.length >= 1){ renderPlayersChips(names); }
-  };
-  $('#names').addEventListener('input', syncChips);
-  $('#names').addEventListener('blur', ()=>{
-    const lines = $('#names').value.split(/\r?\n|,|;/).map(s=>normalizeName(s)).filter(Boolean);
-    $('#names').value = lines.join('\n');
-    syncChips();
-  });
-
-  // Første visning
+  // Fyll fra URL seed/names om gitt
   const { seed, namesParam } = parseURL();
   if(namesParam){
-    const fromURL = decodeURIComponent(namesParam).split(',').map(normalizeName).filter(Boolean);
-    if(fromURL.length === 4){ $('#names').value = fromURL.join('\n'); }
+    const list = decodeURIComponent(namesParam).split(',').map(normalizeName).filter(Boolean);
+    const inputs = getInputs();
+    if(list.length===4) inputs.forEach((inp,idx)=> inp.value = list[idx]);
   }
 
-  // Render chips av initiale navn
-  renderPlayersChips(getNames());
-
   if(seed){
-    draw({forceNewSeed:false}); // reproduser hvis seed i URL
+    draw({forceNewSeed:false});
   }else{
     const last = loadState();
     if(last){
-      // Vis forrige resultat i slots + chips
-      renderPlayersChips(last.names);
+      const inputs = getInputs();
+      last.names.forEach((n,i)=>{ if(inputs[i]) inputs[i].value = n; });
       animateAssignment(last.pairs).then(()=> renderResultText(last.pairs));
       $('#seedInfo').textContent = `Seed: ${last.seed}`;
       $('#timeInfo').textContent = `Tidspunkt: ${fmtTime(new Date(last.timestamp))}`;
@@ -262,18 +212,17 @@ window.__fairnessTest = function(trials=60000){
   const names = getNames();
   if(names.length!==4){ console.warn('Rettferdighets-sjekk: trenger 4 navn.'); return; }
   const sorted = sortNamesStable(names.map(normalizeName));
-  const counts = [0,0,0];
+  const counts=[0,0,0];
   for(let i=0;i<trials;i++){
-    const seed = String(i);
-    const u = hashToUnit(`${seed}::${sorted.join('|')}`);
-    const idx = Math.floor(u*3);
-    counts[idx]++;
+    const seed=String(i);
+    const u=hashToUnit(`${seed}::${sorted.join('|')}`);
+    const idx=Math.floor(u*3); counts[idx]++;
   }
   const pct = counts.map(c => (100*c/trials).toFixed(2)+'%');
   const exp = trials/3;
   const chi = counts.reduce((s,c)=> s + ((c-exp)**2)/exp, 0);
   console.log(`Fordeling over ${trials} trekk:`, counts, pct, 'chi2=', chi.toFixed(3));
-  return {counts, pct, chi};
+  return {counts,pct,chi};
 };
 
 document.addEventListener('DOMContentLoaded', bind);
