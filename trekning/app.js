@@ -10,15 +10,15 @@ function normalizeName(s){
   return s.trim().toLowerCase().split(/\s+/).map(w=>w.charAt(0).toUpperCase()+w.slice(1)).join(' ');
 }
 function parseURL(){
-  const p=new URLSearchParams(location.search);
-  return {seed:p.get('seed')||null, namesParam:p.get('names')};
+  const p = new URLSearchParams(location.search);
+  return { seed: p.get('seed') || null, namesParam: p.get('names') };
 }
 function getNames(){
   const { namesParam } = parseURL();
   if(namesParam){
     const list = decodeURIComponent(namesParam).split(',').map(normalizeName).filter(Boolean);
     const uniq = []; for(const n of list){ if(!uniq.includes(n)) uniq.push(n); }
-    if(uniq.length===4) return uniq;
+    if(uniq.length === 4) return uniq;
   }
   return DEFAULT_NAMES;
 }
@@ -32,6 +32,7 @@ function combosOfFour(sorted){
     [[A,D],[B,C]],
   ];
 }
+// Hash -> [0,1)
 function hashToUnit(seedStr){
   let h=0x811c9dc5;
   for(let i=0;i<seedStr.length;i++){
@@ -46,12 +47,14 @@ function toSeedFromNow(){
 }
 function namesToParam(names){ return encodeURIComponent(names.join(',')); }
 
-// ===== Render spillere =====
+// ===== Render spillere (horisontal) =====
 function renderPlayers(names){
-  const row = $('#playersRow'); row.innerHTML='';
+  const row = $('#playersRow'); row.innerHTML = '';
   names.forEach(n=>{
-    const tag=document.createElement('span');
-    tag.className='name-tag'; tag.setAttribute('role','listitem'); tag.textContent=n.toUpperCase();
+    const tag = document.createElement('span');
+    tag.className = 'name-tag';
+    tag.setAttribute('role','listitem');
+    tag.textContent = n.toUpperCase();
     row.appendChild(tag);
   });
 }
@@ -75,7 +78,7 @@ const confetti = (()=>{
     for(const p of pieces){
       p.x+=p.vx; p.y+=p.vy; p.rot+=p.vr; p.vy+=0.02;
       ctx.save(); ctx.translate(p.x,p.y); ctx.rotate(p.rot);
-      ctx.fillStyle=`hsl(${(p.x/W)*360}, 85%, 50%)`;
+      ctx.fillStyle = `hsl(${(p.x/W)*360}, 85%, 50%)`;
       ctx.fillRect(-p.r,-p.r,p.r*2,p.r*2);
       ctx.restore();
     }
@@ -86,86 +89,110 @@ const confetti = (()=>{
 })();
 
 // ===== LocalStorage =====
-const STORAGE_KEY='trekningDag1';
+const STORAGE_KEY = 'trekningDag1';
 function saveState(state){ try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }catch{} }
-function loadState(){ try{ const s=localStorage.getItem(STORAGE_KEY); return s?JSON.parse(s):null; }catch{ return null; } }
+function loadState(){ try{ const s = localStorage.getItem(STORAGE_KEY); return s ? JSON.parse(s) : null; }catch{ return null; } }
 
-// ===== Animasjon (fra navn til slot) =====
+// ===== Animasjon (fra navn til slot) + robust fallback =====
 function rect(el){ return el.getBoundingClientRect(); }
-function makeFlyingTag(fromRect,text){
-  const chip=document.createElement('span');
-  chip.className='chip flying'; chip.textContent=text.toUpperCase();
-  Object.assign(chip.style,{left:`${fromRect.left}px`,top:`${fromRect.top}px`,width:`${fromRect.width}px`,height:`${fromRect.height}px`});
-  document.body.appendChild(chip); return chip;
+function makeFlyingTag(fromRect, text){
+  const chip = document.createElement('span');
+  chip.className = 'chip flying';
+  chip.textContent = text.toUpperCase();
+  Object.assign(chip.style, {
+    left:`${fromRect.left}px`, top:`${fromRect.top}px`,
+    width:`${fromRect.width}px`, height:`${fromRect.height}px`
+  });
+  document.body.appendChild(chip);
+  return chip;
 }
-function animateFromTag(name,targetSlot){
-  const tag=$$('#playersRow .name-tag').find(el=>el.textContent.toLowerCase()===name.toLowerCase());
-  if(!tag||!targetSlot) return Promise.resolve();
-  const from=rect(tag), to=rect(targetSlot);
-  const dx=(to.left+to.width/2)-(from.left+from.width/2);
-  const dy=(to.top+to.height/2)-(from.top+from.height/2);
-  const clone=makeFlyingTag(from,name);
-  requestAnimationFrame(()=>{ clone.style.transform=`translate(${dx}px, ${dy}px)`; clone.style.opacity='0.95'; });
+function animateFromTag(name, targetSlot){
+  const tag = $$('#playersRow .name-tag').find(el => el.textContent.toLowerCase() === name.toLowerCase());
+  if(!tag || !targetSlot) return Promise.resolve();
+
+  const from = rect(tag), to = rect(targetSlot);
+  const dx = (to.left + to.width/2) - (from.left + from.width/2);
+  const dy = (to.top + to.height/2) - (from.top + from.height/2);
+  const clone = makeFlyingTag(from, name);
+
+  // Start anim
+  requestAnimationFrame(()=>{
+    clone.style.transform = `translate(${dx}px, ${dy}px)`;
+    clone.style.opacity = '0.95';
+  });
+
+  // Robust: resolve selv om 'transitionend' ikke fyrer
   return new Promise(res=>{
-    clone.addEventListener('transitionend',()=>{
-      clone.remove(); targetSlot.classList.add('filled'); targetSlot.innerHTML='';
-      const final=document.createElement('span'); final.className='chip-final'; final.textContent=name.toUpperCase();
-      targetSlot.appendChild(final); res();
-    },{once:true});
+    let done = false;
+    const finish = ()=>{
+      if(done) return; done = true;
+      clone.remove();
+      targetSlot.classList.add('filled');
+      targetSlot.innerHTML = '';
+      const final = document.createElement('span');
+      final.className = 'chip-final';
+      final.textContent = name.toUpperCase();
+      targetSlot.appendChild(final);
+      res();
+    };
+    clone.addEventListener('transitionend', finish, {once:true});
+    setTimeout(finish, 700); // fallback
   });
 }
 function clearSlots(){ $$('.slot').forEach(s=>{ s.classList.remove('filled'); s.innerHTML=''; }); }
 
-// ===== Core draw =====
+// ===== Trekning =====
 function renderResultText(pairs){
-  $('#announce').textContent=`Trekning klar: Bil 1: ${pairs[0].join(' og ')}, Bil 2: ${pairs[1].join(' og ')}.`;
+  $('#announce').textContent = `Trekning klar: Bil 1: ${pairs[0].join(' og ')}, Bil 2: ${pairs[1].join(' og ')}.`;
 }
 async function animateAssignment(pairs){
   clearSlots();
-  const [p1,p2]=pairs;
-  const s11=document.querySelector('.slot[data-car="1"][data-slot="1"]');
-  const s12=document.querySelector('.slot[data-car="1"][data-slot="2"]');
-  const s21=document.querySelector('.slot[data-car="2"][data-slot="1"]');
-  const s22=document.querySelector('.slot[data-car="2"][data-slot="2"]');
-  const plan=[[p1[0],s11],[p1[1],s12],[p2[0],s21],[p2[1],s22]];
+  const [p1,p2] = pairs;
+  const s11 = document.querySelector('.slot[data-car="1"][data-slot="1"]');
+  const s12 = document.querySelector('.slot[data-car="1"][data-slot="2"]');
+  const s21 = document.querySelector('.slot[data-car="2"][data-slot="1"]');
+  const s22 = document.querySelector('.slot[data-car="2"][data-slot="2"]');
+  const plan = [[p1[0],s11],[p1[1],s12],[p2[0],s21],[p2[1],s22]];
+
   for(const [name,slot] of plan){
-    await new Promise(r=>setTimeout(r,90));
+    await new Promise(r=>setTimeout(r, 90));  // liten delay for “show”
     /* eslint-disable no-await-in-loop */
-    await animateFromTag(name,slot);
+    await animateFromTag(name, slot);
   }
   confetti();
 }
 
 function draw({forceNewSeed=false}={}){
-  const baseNames=getNames();
-  if(baseNames.length!==4){ alert('Oppgi fire unike navn i URL (&names=) eller bruk standard.'); return; }
-  const sorted=sortNamesStable(baseNames);
-  const combos=combosOfFour(sorted);
+  const baseNames = getNames();
+  if(baseNames.length !== 4){ alert('Oppgi fire unike navn i URL (&names=) eller bruk standard.'); return; }
 
-  const {seed:seedFromURL}=parseURL();
-  let seed=seedFromURL; if(forceNewSeed||!seed){ seed=toSeedFromNow(); }
+  const sorted = sortNamesStable(baseNames);
+  const combos = combosOfFour(sorted);
 
-  const u=hashToUnit(`${seed}::${sorted.join('|')}`);
-  const idx=Math.floor(u*3);
-  const pairs=combos[idx];
+  const { seed: seedFromURL } = parseURL();
+  let seed = seedFromURL;
+  if(forceNewSeed || !seed){ seed = toSeedFromNow(); }
 
-  $('#seedInfo').textContent=`Seed: ${seed}`;
-  const now=new Date(); $('#timeInfo').textContent=`Tidspunkt: ${fmtTime(now)}`;
-  $('#shareBtn').disabled=false;
+  const u = hashToUnit(`${seed}::${sorted.join('|')}`);
+  const idx = Math.floor(u * 3);   // 0..2 uniform
+  const pairs = combos[idx];
 
-  animateAssignment(pairs).then(()=>renderResultText(pairs));
+  $('#seedInfo').textContent = `Seed: ${seed}`;
+  $('#timeInfo').textContent = `Tidspunkt: ${fmtTime(new Date())}`;
+  $('#shareBtn').disabled = false;
 
-  saveState({seed,timestamp:now.toISOString(),names:baseNames,sorted,index:idx,pairs});
-  return {seed,pairs,idx,sorted};
+  animateAssignment(pairs).then(()=> renderResultText(pairs));
+
+  saveState({seed, timestamp: new Date().toISOString(), names: baseNames, sorted, index: idx, pairs});
+  return {seed, pairs, idx, sorted};
 }
 
 // Delbar URL
 async function copyShareURL(){
-  const state=loadState(); const names=state?.names||getNames();
-  const base=`${location.origin}${location.pathname.replace(/\/+$/,'')}`;
-  const url=`${base}?seed=${encodeURIComponent(state?.seed||toSeedFromNow())}&names=${namesToParam(names)}`;
-  try{ await navigator.clipboard.writeText(url); $('#announce').textContent='Delbar lenke kopiert.'; }
-  catch{
+  const state = loadState(); const names = state?.names || getNames();
+  const base = `${location.origin}${location.pathname.replace(/\/+$/,'')}`;
+  const url  = `${base}?seed=${encodeURIComponent(state?.seed || toSeedFromNow())}&names=${namesToParam(names)}`;
+  try{ await navigator.clipboard.writeText(url); }catch{
     const ta=document.createElement('textarea'); ta.value=url; document.body.appendChild(ta);
     ta.select(); try{ document.execCommand('copy'); }catch{} document.body.removeChild(ta);
   }
@@ -173,36 +200,36 @@ async function copyShareURL(){
 
 // Init
 function bind(){
-  const names=getNames();
+  const names = getNames();
   renderPlayers(names);
 
-  $('#drawBtn').addEventListener('click',()=>draw({forceNewSeed:false}));
-  $('#redrawBtn').addEventListener('click',()=>draw({forceNewSeed:true}));
-  $('#shareBtn').addEventListener('click',copyShareURL);
+  $('#drawBtn').addEventListener('click', ()=> draw({forceNewSeed:false}));
+  $('#redrawBtn').addEventListener('click', ()=> draw({forceNewSeed:true}));
+  $('#shareBtn').addEventListener('click', copyShareURL);
 
-  const {seed}=parseURL();
+  const { seed } = parseURL();
   if(seed){ draw({forceNewSeed:false}); }
   else{
-    const last=loadState();
+    const last = loadState();
     if(last){
       renderPlayers(last.names);
-      animateAssignment(last.pairs).then(()=>renderResultText(last.pairs));
-      $('#seedInfo').textContent=`Seed: ${last.seed}`;
-      $('#timeInfo').textContent=`Tidspunkt: ${fmtTime(new Date(last.timestamp))}`;
-      $('#shareBtn').disabled=false;
+      animateAssignment(last.pairs).then(()=> renderResultText(last.pairs));
+      $('#seedInfo').textContent = `Seed: ${last.seed}`;
+      $('#timeInfo').textContent = `Tidspunkt: ${fmtTime(new Date(last.timestamp))}`;
+      $('#shareBtn').disabled = false;
     }
   }
 }
 
-// Monte Carlo (konsoll)
-window.__fairnessTest=function(trials=60000){
-  const names=getNames(); if(names.length!==4){ console.warn('Trenger 4 navn.'); return; }
-  const sorted=sortNamesStable(names); const counts=[0,0,0];
+document.addEventListener('DOMContentLoaded', bind);
+
+// Monte Carlo (konsoll): window.__fairnessTest(60000)
+window.__fairnessTest = function(trials=60000){
+  const names = getNames(); if(names.length!==4){ console.warn('Trenger 4 navn.'); return; }
+  const sorted = sortNamesStable(names); const counts=[0,0,0];
   for(let i=0;i<trials;i++){ const u=hashToUnit(`${i}::${sorted.join('|')}`); const idx=Math.floor(u*3); counts[idx]++; }
-  const pct=counts.map(c=>(100*c/trials).toFixed(2)+'%'); const exp=trials/3;
-  const chi=counts.reduce((s,c)=>s+((c-exp)**2)/exp,0);
-  console.log(`Fordeling over ${trials} trekk:`,counts,pct,'chi2=',chi.toFixed(3));
+  const pct = counts.map(c=>(100*c/trials).toFixed(2)+'%'); const exp=trials/3;
+  const chi = counts.reduce((s,c)=>s+((c-exp)**2)/exp,0);
+  console.log('Fordeling', counts, pct, 'chi2=', chi.toFixed(3));
   return {counts,pct,chi};
 };
-
-document.addEventListener('DOMContentLoaded', bind);
