@@ -1,4 +1,69 @@
-/* === KOMPAKT LEADERBOARD === */
+@font-face {
+  font-family: 'Microgramma';
+  src: url('../fonts/Microgramma Normal.ttf') format('truetype');
+  font-weight: normal;
+}
+
+:root{
+  --gold:#d4af37; /* gull som forsiden */
+  --ink:#222;
+  --ink-2:#666;
+  --bg:#f0f0f0;
+  --rule:#ccc;
+  --rule-2:#999;  /* grå som HONOUR BOARD-tittel */
+}
+
+html,body{
+  margin:0;
+  background:var(--bg);
+  color:var(--ink);
+  font-family: Arial, sans-serif;
+}
+
+.lb-body .wrap{
+  max-width: 980px;
+  margin: 40px auto 80px;
+  padding: 0 20px;
+  text-align: center;
+}
+
+.lb-body h1{
+  font-family:'Microgramma', Arial, sans-serif;
+  letter-spacing: 2px;
+  font-size: clamp(32px,5.2vw,64px);
+  margin: 0 0 8px;
+}
+
+.lb-body .sub{
+  margin:0 0 26px;
+  color:var(--ink-2);
+}
+
+/* Tittel-linje lik HONOUR BOARD (tekst delt av to linjer) */
+.section-title{
+  margin:40px auto 18px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:14px;
+  color:#999;
+  font-family:'Microgramma', Arial, sans-serif;
+  letter-spacing:3px;
+  white-space:nowrap;
+}
+.section-title span{
+  font-size: clamp(18px,2.6vw,28px);
+}
+.section-title::before,
+.section-title::after{
+  content:"";
+  height:1px;
+  flex:1 1 320px;
+  background: linear-gradient(to right, var(--rule), var(--gold), var(--rule));
+  opacity:.85;
+}
+
+/* === Kompakt OVERALL-leaderboard === */
 .section-title--overall span { letter-spacing: 3px; }
 
 .compact-board{
@@ -43,9 +108,7 @@
   font-family:'Microgramma', Arial, sans-serif; font-size:12px; letter-spacing:1px; color:#777;
 }
 
-.cell-day{
-  position:relative;
-}
+.cell-day{ position:relative; }
 .cell-day .bonus{
   display:inline-flex; gap:2px; margin-left:8px; font-size:14px; color:var(--gold);
 }
@@ -61,11 +124,8 @@
   background: linear-gradient(90deg, rgba(212,175,55,0.10) 0%, rgba(212,175,55,0.22) 80%);
 }
 
-.compact-board tbody tr:hover td{
-  background:#fcfcfc;
-}
+.compact-board tbody tr:hover td{ background:#fcfcfc; }
 
-/* Små skjermer */
 @media (max-width:640px){
   .cb-col-player{ width: 45%; }
   .cb-col-d{ width: 18%; }
