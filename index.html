@@ -84,34 +84,50 @@
         /* Hall of Champions Section */
         .honour-board {
             margin-top: 60px;
-            padding: 30px 20px 0;
+            padding: 10px 20px 30px;
             width: 100%;
             max-width: 600px;
-            position: relative;
-            text-align: center;
+            /* NB: Vi bruker linjer på selve tittelen, ikke border-top her */
         }
 
-        .honour-board::before {
-            content: "";
-            position: absolute;
-            top: 18px;
-            left: 0;
-            width: 100%;
-            height: 1px;
-            background: linear-gradient(to right, #ccc, #d4af37, #ccc);
-            z-index: 1;
-        }
-
+        /* Tittel som deler linjen (linjer før/etter teksten) + animasjon */
         .honour-title {
-            position: relative;
-            display: inline-block;
-            background-color: #f0f0f0;
-            padding: 0 20px;
             font-family: 'Microgramma', Arial, sans-serif;
             font-size: 2.5vw;
             letter-spacing: 3px;
             color: #999;
-            z-index: 2;
+            margin: 0 0 18px 0;
+            display: flex;
+            align-items: center;
+            gap: 16px;                /* luft mellom tekst og linjer */
+            justify-content: center;  /* sentrer tittel + linjer */
+            animation: titleFade .6s ease-out .1s both;
+        }
+        .honour-title::before,
+        .honour-title::after {
+            content: "";
+            height: 1px;
+            flex: 1 1 auto; /* linjene fyller tilgjengelig bredde */
+            background: linear-gradient(to right, #ccc, #d4af37, #ccc);
+            opacity: .75;
+            transform: scaleX(0);
+            animation: lineGrow .6s ease-out forwards;
+        }
+        .honour-title::before {
+            transform-origin: right;  /* vokser fra teksten og ut mot venstre */
+        }
+        .honour-title::after {
+            transform-origin: left;   /* vokser fra teksten og ut mot høyre */
+            animation-delay: .05s;    /* bittelitt forsinkelse for fin effekt */
+        }
+
+        @keyframes titleFade {
+            from { opacity: 0; transform: translateY(-6px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes lineGrow {
+            from { transform: scaleX(0); opacity: 0; }
+            to   { transform: scaleX(1); opacity: .75; }
         }
 
         .champions-list {
@@ -119,8 +135,6 @@
             flex-direction: column;
             gap: 12px;
             align-items: center;
-            justify-content: center;
-            margin-top: 15px;
         }
 
         .champion-row {
@@ -160,105 +174,14 @@
             align-items: center;
             font-family: 'Courier New', monospace;
         }
-
+        
         .winner-name {
             width: 40px;
             text-align: left;
         }
 
+        /* Repeat champion stars */
         .stars {
             display: inline-flex;
             gap: 2px;
-            margin-left: 8px;
-            opacity: 0.7;
-        }
 
-        .star {
-            font-size: 1vw;
-            color: #d4af37;
-        }
-
-        /* Responsiv justering for små skjermer */
-        @media (max-width: 600px) {
-            h1 { font-size: 8vw; }
-            #countdown { font-size: 6vw; }
-            p { font-size: 4vw; }
-            .current-year-badge { font-size: 4.5vw; }
-            .year-divider { width: 40px; }
-            .honour-title {
-                font-size: 4.5vw;
-                padding: 0 15px;
-            }
-            .champion-row {
-                font-size: 3.5vw;
-                gap: 15px;
-            }
-            .divider { width: 45px; }
-            .star { font-size: 2.2vw; }
-            .winner-name { width: 35px; }
-        }
-    </style>
-</head>
-<body>
-    <h1>COPA RESERVADO</h1>
-    <p>Est. 2021</p>
-    <div id="countdown"></div>
-
-    <!-- Current Year (2025) Display -->
-    <div class="current-year-badge">
-        <span class="year-display">2025</span>
-        <span class="year-divider"></span>
-        <span class="year-winner">TBD</span>
-    </div>
-
-    <!-- Hall of Champions (Previous Years) -->
-    <section class="honour-board">
-        <h2 class="honour-title">HONOUR BOARD</h2>
-
-        <div class="champions-list">
-            <div class="champion-row">
-                <span class="year">2024</span>
-                <span class="divider"></span>
-                <span class="winner"><span class="winner-name">KAS</span><span class="stars"><span class="star">★</span><span class="star">★</span><span class="star">★</span></span></span>
-            </div>
-
-            <div class="champion-row">
-                <span class="year">2023</span>
-                <span class="divider"></span>
-                <span class="winner"><span class="winner-name">KAS</span><span class="stars"><span class="star">★</span><span class="star">★</span></span></span>
-            </div>
-
-            <div class="champion-row">
-                <span class="year">2022</span>
-                <span class="divider"></span>
-                <span class="winner"><span class="winner-name">TR</span><span class="stars"><span class="star">★</span></span></span>
-            </div>
-
-            <div class="champion-row">
-                <span class="year">2021</span>
-                <span class="divider"></span>
-                <span class="winner"><span class="winner-name">KAS</span><span class="stars"><span class="star">★</span></span></span>
-            </div>
-        </div>
-    </section>
-
-    <script>
-        // Sett datoen for nedtelling
-        var countDownDate = new Date("Nov 6, 2025 14:00:00").getTime();
-        var countdownfunction = setInterval(function() {
-            var now = new Date().getTime();
-            var distance = countDownDate - now;
-            var days = Math.floor(distance / (1000 * 60 * 60 * 24));
-            var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-            var seconds = Math.floor((distance % (1000 * 60)) / 1000);
-            document.getElementById("countdown").innerHTML =
-                days + "d " + hours + "h " + minutes + "m " + seconds + "s ";
-            if (distance < 0) {
-                clearInterval(countdownfunction);
-                document.getElementById("countdown").innerHTML = "TURNERINGEN HAR STARTET!";
-            }
-        }, 1000);
-    </script>
-</body>
-</html>
