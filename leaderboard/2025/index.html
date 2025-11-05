@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Copa Reservado – Leaderboard 2025</title>
+  <link rel="stylesheet" href="../styles.css">
+</head>
+<body class="lb-body">
+  <div class="wrap">
+    <h1>LEADERBOARD 2025</h1>
+    <p class="sub">MA · TR · KAS · FSA</p>
+
+    <div class="section-title"><span>Dag 1 – Santa Clara (Stableford)</span></div>
+    <table class="board" id="day1Table">
+      <thead>
+        <tr>
+          <th class="col-player">Spiller</th>
+          <th class="col-note">Notat</th>
+          <th class="col-bonus">Bonus</th>
+          <th class="col-pts">Poeng</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+
+    <div class="section-title"><span>Dag 2 – Alferini (Skins)</span></div>
+    <table class="board" id="day2Table">
+      <thead>
+        <tr>
+          <th class="col-player">Spiller</th>
+          <th class="col-note">Notat</th>
+          <th class="col-bonus">Bonus</th>
+          <th class="col-pts">Poeng</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+
+    <div class="section-title"><span>Dag 3 – Marbella Club (Best Ball – Match Play)</span></div>
+    <table class="board" id="day3Table">
+      <thead>
+        <tr>
+          <th class="col-player">Spiller</th>
+          <th class="col-note">Notat</th>
+          <th class="col-bonus">Bonus</th>
+          <th class="col-pts">Poeng</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+
+    <div class="section-title"><span>Sammenlagt</span></div>
+    <table class="board overall" id="overallTable">
+      <thead>
+        <tr>
+          <th class="col-player">Spiller</th>
+          <th class="col-note">Dag 1 / Dag 2 / Dag 3</th>
+          <th class="col-bonus">Bonus totalt</th>
+          <th class="col-pts">Sum poeng</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+
+    <div class="rules">
+      <p><b>Regler:</b> Hovedkonkurransen gir <b>4–3–2–1</b> poeng per dag (Dag&nbsp;3: vinnerlag <b>4</b> pr. spiller, taperlag <b>2</b> pr. spiller). <span class="pill">Closest to Pin</span> og <span class="pill">Longest Drive</span> gir <b>+0,5</b> hver.</p>
+      <p><b>Dag 1 – Stableford:</b> fullt hcp. Rangering gir 4–3–2–1.</p>
+      <p><b>Dag 2 – Skins:</b> 1 skin pr. hull, delt lavest → skin deles. Poeng 4–3–2–1 etter flest skins.</p>
+      <p><b>Dag 3 – Lagmatch:</b> 90% hcp. Lagets beste netto teller. Vinnende lag: 4 pr. spiller, tapende lag: 2.</p>
+    </div>
+  </div>
+
+  <!-- Årets data -->
+  <script src="../data/2025.js"></script>
+  <!-- Felles render -->
+  <script src="../leaderboard.js"></script>
+  <script> runLeaderboard(); </script>
+</body>
+</html>
