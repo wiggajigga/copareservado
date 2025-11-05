@@ -10,51 +10,177 @@
             src: url('fonts/Microgramma Normal.ttf') format('truetype');
             font-weight: normal;
         }
-
         /* Sentrer innholdet horisontalt og vertikalt */
         body {
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh; /* Tar opp hele høyden på skjermen */
+            min-height: 100vh;
             margin: 0;
             background-color: #f0f0f0;
             text-align: center;
             flex-direction: column;
             font-family: Arial, sans-serif;
+            padding: 40px 20px;
         }
-
         /* Font for h1 */
         h1 {
             font-family: 'Microgramma', Arial, sans-serif;
-            font-size: 5vw; /* Bruk viewport-bredde for å skalere */
+            font-size: 5vw;
             margin: 0;
         }
-
         /* Styling for nedtellingen */
         #countdown {
-            font-size: 4vw; /* Skalerbar nedtellingstekst */
+            font-size: 4vw;
             margin-top: 20px;
         }
-
         /* Teksten Marbella under overskriften */
         p {
-            font-size: 2.5vw; /* Bruk viewport-bredde for skalering */
+            font-size: 2.5vw;
             margin: 0;
+        }
+
+        /* 2025 Current Year Badge */
+        .current-year-badge {
+            margin-top: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 25px;
+            font-size: 2.5vw;
+        }
+
+        .year-display {
+            color: #d4af37;
+            font-family: 'Microgramma', Arial, sans-serif;
+            font-weight: 600;
+            letter-spacing: 3px;
+        }
+
+        .year-divider {
+            width: 60px;
+            height: 2px;
+            background: linear-gradient(to right, #ccc, #d4af37, #ccc);
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        .year-winner {
+            color: #d4af37;
+            font-style: italic;
+            opacity: 0.6;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 0.4;
+            }
+            50% {
+                opacity: 1;
+            }
+        }
+
+        /* Hall of Champions Section */
+        .honour-board {
+            margin-top: 80px;
+            padding: 40px 20px;
+            width: 100%;
+            max-width: 600px;
+            border-top: 1px solid #ddd;
+        }
+
+        .honour-title {
+            font-family: 'Microgramma', Arial, sans-serif;
+            font-size: 2.5vw;
+            letter-spacing: 3px;
+            margin-bottom: 30px;
+            color: #999;
+        }
+
+        .champions-list {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .champion-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 30px;
+            font-size: 2.2vw;
+            letter-spacing: 2px;
+            min-width: 280px;
+            padding: 12px 0;
+            transition: all 0.3s ease;
+        }
+
+        .champion-row:hover {
+            transform: translateX(5px);
+        }
+
+        .year {
+            font-weight: 300;
+            color: #666;
+            min-width: 60px;
+            text-align: right;
+        }
+
+        .divider {
+            width: 80px;
+            height: 1px;
+            background: linear-gradient(to right, #ccc, #999, #ccc);
+        }
+
+        .winner {
+            font-weight: 400;
+            color: #333;
+            min-width: 60px;
+            text-align: left;
+        }
+
+        /* Repeat champion stars */
+        .stars {
+            display: inline-flex;
+            gap: 2px;
+            margin-left: 8px;
+            opacity: 0.7;
+        }
+
+        .star {
+            font-size: 1.2vw;
+            color: #d4af37;
         }
 
         /* Responsiv justering for små skjermer */
         @media (max-width: 600px) {
             h1 {
-                font-size: 8vw; /* Øker fontstørrelsen på små skjermer */
+                font-size: 8vw;
             }
-
             #countdown {
-                font-size: 6vw; /* Juster nedtellingen for små skjermer */
+                font-size: 6vw;
             }
-
             p {
-                font-size: 4vw; /* Juster Marbella-teksten for små skjermer */
+                font-size: 4vw;
+            }
+            .current-year-badge {
+                font-size: 4.5vw;
+            }
+            .year-divider {
+                width: 40px;
+            }
+            .honour-title {
+                font-size: 4.5vw;
+            }
+            .champion-row {
+                font-size: 4vw;
+                gap: 20px;
+            }
+            .divider {
+                width: 60px;
+            }
+            .star {
+                font-size: 2.5vw;
             }
         }
     </style>
@@ -64,13 +190,53 @@
     <p>Est. 2021</p>
     <div id="countdown"></div>
 
+    <!-- Current Year (2025) Display -->
+    <div class="current-year-badge">
+        <span class="year-display">2025</span>
+        <span class="year-divider"></span>
+        <span class="year-winner">—</span>
+    </div>
+
+    <!-- Hall of Champions (Previous Years) -->
+    <section class="honour-board">
+        <h2 class="honour-title">HONOUR BOARD</h2>
+        
+        <div class="champions-list">
+            <!-- 2024 -->
+            <div class="champion-row">
+                <span class="year">2024</span>
+                <span class="divider"></span>
+                <span class="winner">KAS<span class="stars"><span class="star">★</span><span class="star">★</span><span class="star">★</span></span></span>
+            </div>
+
+            <!-- 2023 -->
+            <div class="champion-row">
+                <span class="year">2023</span>
+                <span class="divider"></span>
+                <span class="winner">KAS<span class="stars"><span class="star">★</span><span class="star">★</span></span></span>
+            </div>
+
+            <!-- 2022 -->
+            <div class="champion-row">
+                <span class="year">2022</span>
+                <span class="divider"></span>
+                <span class="winner">TR<span class="stars"><span class="star">★</span></span></span>
+            </div>
+
+            <!-- 2021 -->
+            <div class="champion-row">
+                <span class="year">2021</span>
+                <span class="divider"></span>
+                <span class="winner">KAS<span class="stars"><span class="star">★</span></span></span>
+            </div>
+        </div>
+    </section>
+
     <script>
         // Sett datoen for nedtelling
         var countDownDate = new Date("Nov 6, 2025 14:00:00").getTime();
-
         // Oppdater nedtellingen hvert sekund
         var countdownfunction = setInterval(function() {
-
             // Få dagens dato og tid
             var now = new Date().getTime();
             
