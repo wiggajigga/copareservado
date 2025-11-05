@@ -1,187 +1,247 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Copa Reservado Countdown</title>
-    <style>
-        @font-face {
-            font-family: 'Microgramma';
-            src: url('fonts/Microgramma Normal.ttf') format('truetype');
-            font-weight: normal;
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Copa Reservado Countdown</title>
+  <style>
+    @font-face {
+      font-family: 'Microgramma';
+      src: url('fonts/Microgramma Normal.ttf') format('truetype');
+      font-weight: normal;
+    }
 
-        /* Sentrer innholdet horisontalt og vertikalt */
-        body {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            margin: 0;
-            background-color: #f0f0f0;
-            text-align: center;
-            flex-direction: column;
-            font-family: Arial, sans-serif;
-            padding: 40px 20px;
-        }
+    body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      margin: 0;
+      background-color: #f0f0f0;
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding: 40px 20px;
+    }
 
-        /* Font for h1 */
-        h1 {
-            font-family: 'Microgramma', Arial, sans-serif;
-            font-size: 5vw;
-            margin: 0;
-        }
+    h1 {
+      font-family: 'Microgramma', Arial, sans-serif;
+      font-size: 5vw;
+      margin: 0;
+    }
 
-        /* Styling for nedtellingen */
-        #countdown {
-            font-size: 4vw;
-            margin-top: 20px;
-        }
+    p {
+      font-size: 2.5vw;
+      margin: 0;
+    }
 
-        /* Teksten Marbella under overskriften */
-        p {
-            font-size: 2.5vw;
-            margin: 0;
-        }
+    #countdown {
+      font-size: 4vw;
+      margin-top: 20px;
+    }
 
-        /* 2025 Current Year Badge */
-        .current-year-badge {
-            margin-top: 30px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 25px;
-            font-size: 2.5vw;
-        }
+    .current-year-badge {
+      margin-top: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 25px;
+      font-size: 2.5vw;
+    }
 
-        .year-display {
-            color: #d4af37;
-            font-family: 'Microgramma', Arial, sans-serif;
-            font-weight: 600;
-            letter-spacing: 3px;
-        }
+    .year-display {
+      color: #d4af37;
+      font-family: 'Microgramma', Arial, sans-serif;
+      font-weight: 600;
+      letter-spacing: 3px;
+    }
 
-        .year-divider {
-            width: 60px;
-            height: 2px;
-            background: linear-gradient(to right, #ccc, #d4af37, #ccc);
-            animation: pulse 2s ease-in-out infinite;
-        }
+    .year-divider {
+      width: 60px;
+      height: 2px;
+      background: linear-gradient(to right, #ccc, #d4af37, #ccc);
+      animation: pulse 2s ease-in-out infinite;
+    }
 
-        .year-winner {
-            color: #d4af37;
-            font-family: 'Courier New', monospace;
-            font-style: italic;
-            opacity: 0.6;
-            font-weight: 300;
-        }
+    .year-winner {
+      color: #d4af37;
+      font-family: 'Courier New', monospace;
+      font-style: italic;
+      opacity: 0.6;
+      font-weight: 300;
+    }
 
-        @keyframes pulse {
-            0%, 100% { opacity: 0.4; }
-            50% { opacity: 1; }
-        }
+    @keyframes pulse {
+      0%, 100% { opacity: 0.4; }
+      50% { opacity: 1; }
+    }
 
-        /* Hall of Champions Section */
-        .honour-board {
-            margin-top: 60px;
-            padding: 10px 20px 30px;
-            width: 100%;
-            max-width: 600px;
-            /* NB: Vi bruker linjer på selve tittelen, ikke border-top her */
-        }
+    /* HONOUR BOARD */
+    .honour-board {
+      margin-top: 60px;
+      width: 100%;
+      max-width: 600px;
+      text-align: center;
+      position: relative;
+    }
 
-        /* Tittel som deler linjen (linjer før/etter teksten) + animasjon */
-        .honour-title {
-            font-family: 'Microgramma', Arial, sans-serif;
-            font-size: 2.5vw;
-            letter-spacing: 3px;
-            color: #999;
-            margin: 0 0 18px 0;
-            display: flex;
-            align-items: center;
-            gap: 16px;                /* luft mellom tekst og linjer */
-            justify-content: center;  /* sentrer tittel + linjer */
-            animation: titleFade .6s ease-out .1s both;
-        }
-        .honour-title::before,
-        .honour-title::after {
-            content: "";
-            height: 1px;
-            flex: 1 1 auto; /* linjene fyller tilgjengelig bredde */
-            background: linear-gradient(to right, #ccc, #d4af37, #ccc);
-            opacity: .75;
-            transform: scaleX(0);
-            animation: lineGrow .6s ease-out forwards;
-        }
-        .honour-title::before {
-            transform-origin: right;  /* vokser fra teksten og ut mot venstre */
-        }
-        .honour-title::after {
-            transform-origin: left;   /* vokser fra teksten og ut mot høyre */
-            animation-delay: .05s;    /* bittelitt forsinkelse for fin effekt */
-        }
+    .honour-title {
+      display: inline-block;
+      position: relative;
+      font-family: 'Microgramma', Arial, sans-serif;
+      font-size: 2.5vw;
+      letter-spacing: 3px;
+      color: #999;
+      background-color: #f0f0f0;
+      padding: 0 20px;
+    }
 
-        @keyframes titleFade {
-            from { opacity: 0; transform: translateY(-6px); }
-            to   { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes lineGrow {
-            from { transform: scaleX(0); opacity: 0; }
-            to   { transform: scaleX(1); opacity: .75; }
-        }
+    .honour-board::before {
+      content: "";
+      position: absolute;
+      top: 50%;
+      left: 0;
+      width: 100%;
+      height: 1px;
+      background: linear-gradient(to right, #ccc, #d4af37, #ccc);
+      transform: translateY(-50%);
+      z-index: 0;
+    }
 
-        .champions-list {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            align-items: center;
-        }
+    .champions-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      align-items: center;
+      margin-top: 25px;
+      z-index: 1;
+      position: relative;
+    }
 
-        .champion-row {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 25px;
-            font-size: 1.8vw;
-            letter-spacing: 2px;
-            min-width: 280px;
-            padding: 8px 0;
-            transition: all 0.3s ease;
-        }
+    .champion-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 25px;
+      font-size: 1.8vw;
+      letter-spacing: 2px;
+      transition: all 0.3s ease;
+    }
 
-        .champion-row:hover {
-            transform: translateX(5px);
-        }
+    .champion-row:hover {
+      transform: translateX(5px);
+    }
 
-        .year {
-            font-weight: 300;
-            color: #666;
-            width: 50px;
-            text-align: right;
-            font-family: 'Courier New', monospace;
-        }
+    .year {
+      font-weight: 300;
+      color: #666;
+      width: 50px;
+      text-align: right;
+      font-family: 'Courier New', monospace;
+    }
 
-        .divider {
-            width: 60px;
-            height: 1px;
-            background: linear-gradient(to right, #ccc, #999, #ccc);
-        }
+    .divider {
+      width: 60px;
+      height: 1px;
+      background: linear-gradient(to right, #ccc, #999, #ccc);
+    }
 
-        .winner {
-            font-weight: 400;
-            color: #333;
-            display: flex;
-            align-items: center;
-            font-family: 'Courier New', monospace;
-        }
-        
-        .winner-name {
-            width: 40px;
-            text-align: left;
-        }
+    .winner {
+      font-weight: 400;
+      color: #333;
+      display: flex;
+      align-items: center;
+      font-family: 'Courier New', monospace;
+    }
 
-        /* Repeat champion stars */
-        .stars {
-            display: inline-flex;
-            gap: 2px;
+    .winner-name {
+      width: 40px;
+      text-align: left;
+    }
 
+    .stars {
+      display: inline-flex;
+      gap: 2px;
+      margin-left: 8px;
+      opacity: 0.7;
+    }
+
+    .star {
+      font-size: 1vw;
+      color: #d4af37;
+    }
+
+    @media (max-width: 600px) {
+      h1 { font-size: 8vw; }
+      #countdown { font-size: 6vw; }
+      p { font-size: 4vw; }
+      .current-year-badge { font-size: 4.5vw; }
+      .year-divider { width: 40px; }
+      .honour-title { font-size: 4.5vw; padding: 0 15px; }
+      .champion-row { font-size: 3.5vw; gap: 15px; }
+      .divider { width: 45px; }
+      .star { font-size: 2.2vw; }
+      .winner-name { width: 35px; }
+    }
+  </style>
+</head>
+<body>
+  <h1>COPA RESERVADO</h1>
+  <p>Est. 2021</p>
+  <div id="countdown"></div>
+
+  <div class="current-year-badge">
+    <span class="year-display">2025</span>
+    <span class="year-divider"></span>
+    <span class="year-winner">TBD</span>
+  </div>
+
+  <section class="honour-board">
+    <h2 class="honour-title">HONOUR BOARD</h2>
+
+    <div class="champions-list">
+      <div class="champion-row">
+        <span class="year">2024</span>
+        <span class="divider"></span>
+        <span class="winner"><span class="winner-name">KAS</span><span class="stars"><span class="star">★</span><span class="star">★</span><span class="star">★</span></span></span>
+      </div>
+
+      <div class="champion-row">
+        <span class="year">2023</span>
+        <span class="divider"></span>
+        <span class="winner"><span class="winner-name">KAS</span><span class="stars"><span class="star">★</span><span class="star">★</span></span></span>
+      </div>
+
+      <div class="champion-row">
+        <span class="year">2022</span>
+        <span class="divider"></span>
+        <span class="winner"><span class="winner-name">TR</span><span class="stars"><span class="star">★</span></span></span>
+      </div>
+
+      <div class="champion-row">
+        <span class="year">2021</span>
+        <span class="divider"></span>
+        <span class="winner"><span class="winner-name">KAS</span><span class="stars"><span class="star">★</span></span></span>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    var countDownDate = new Date("Nov 6, 2025 14:00:00").getTime();
+    var countdownfunction = setInterval(function() {
+      var now = new Date().getTime();
+      var distance = countDownDate - now;
+      var days = Math.floor(distance / (1000 * 60 * 60 * 24));
+      var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+      var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+      document.getElementById("countdown").innerHTML =
+        days + "d " + hours + "h " + minutes + "m " + seconds + "s ";
+      if (distance < 0) {
+        clearInterval(countdownfunction);
+        document.getElementById("countdown").innerHTML = "TURNERINGEN HAR STARTET!";
+      }
+    }, 1000);
+  </script>
+</body>
+</html>
