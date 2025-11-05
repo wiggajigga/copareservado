@@ -73,45 +73,46 @@
       margin-top: 60px;
       padding: 10px 20px 30px;
       width: 100%;
-      max-width: 600px;
+      max-width: 600px; /* beholdt fra din fil */
       text-align: center;
     }
 
-    /* Tittelen deler linjen i to – LENGRE linjer på hver side */
+    /* Tittelen deler linjen i to – én linje (nowrap) og LENGRE streker */
     .honour-title {
       font-family: 'Microgramma', Arial, sans-serif;
       font-size: 2.5vw;
       letter-spacing: 3px;
       color: #999;
-      margin: 0 0 22px 0;
+      margin: 0 0 26px 0;
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 16px;
+      gap: 18px;
+      white-space: nowrap;          /* holder tittelen på én linje */
     }
     .honour-title::before,
     .honour-title::after {
       content: "";
       height: 1px;
-      /* Lengre linjer: gi dem fleks + minimumslengde */
-      flex: 1 1 260px;         /* Øk 260px om du vil ha enda lengre linjer */
+      flex: 1 1 320px;              /* lengre linjer på hver side */
       background: linear-gradient(to right, #ccc, #d4af37, #ccc);
-      opacity: .8;
+      opacity: .85;
     }
 
-    /* LISTEN: rene kolonner med grid */
+    /* Vinnerlisten: sentrert under tittelen og pent kolonnejustert */
     .champions-list {
-      /* JS setter width/margin-left for å starte under tittelens høyrekant */
+      margin: 0 auto;               /* midtstill under tittelen */
       display: grid;
-      grid-auto-rows: minmax(28px, auto);
+      /* Kolonner: ÅR | STREK | NAVN | STJERNER */
+      grid-template-columns: 64px 92px 96px 110px;
+      column-gap: 18px;             /* litt mer space mellom år–strek–navn */
       row-gap: 12px;
-      /* Kolonner: ÅR | STREK | NAVN | STJERNER  */
-      grid-template-columns: 60px 80px 80px 90px;
-      justify-content: start;    /* vi styrer startpunktet med JS */
       align-items: center;
+      justify-content: center;       /* behold sentrering som helhet */
+      width: fit-content;
     }
 
-    /* Bruk 'display: contents' så barna i hver rad havner i grid-kolonnene */
+    /* Hver rad bruker grid-kolonnene over */
     .champion-row { display: contents; }
 
     .year {
@@ -123,7 +124,7 @@
 
     .divider {
       justify-self: center;
-      width: 80px;
+      width: 100%;                   /* fyll kolonnen */
       height: 1px;
       background: linear-gradient(to right, #ccc, #999, #ccc);
     }
@@ -135,19 +136,20 @@
       font-weight: 400;
     }
 
-    /* Stjernene: litt ekstra plass, midt-sentrert (omvendt “pyramide” når de øker) */
+    /* Stjerner – litt ekstra plass og midtstilt (omvendt “pyramide” når antallet øker) */
     .stars {
       justify-self: center;
-      min-width: 90px;   /* litt, men ikke mye, ekstra plass */
+      min-width: 110px;              /* litt, men ikke mye, ekstra plass */
       display: inline-flex;
+      justify-content: center;
       gap: 2px;
       opacity: 0.7;
     }
     .star { font-size: 1vw; color: #d4af37; }
 
-    /* Hover-effekt kan beholdes – flytt på hele raden via stjernekolonnen */
+    /* Valgfri subtil hover på navne/stjerne-kolonnene */
     .champion-row:hover .winner-name,
-    .champion-row:hover .stars { transform: translateX(5px); }
+    .champion-row:hover .stars { transform: translateX(4px); }
 
     @media (max-width: 600px) {
       h1 { font-size: 8vw; }
@@ -156,12 +158,10 @@
       .current-year-badge { font-size: 4.5vw; }
       .year-divider { width: 40px; }
       .honour-title { font-size: 4.5vw; gap: 12px; }
-      /* På små skjermer lar vi listen sentreres og dropper presis posisjonering */
+      .honour-title::before, .honour-title::after { flex-basis: 160px; }
       .champions-list {
-        margin-left: 0 !important;
-        width: 100% !important;
-        justify-content: center;
-        grid-template-columns: 55px 60px 70px 80px;
+        grid-template-columns: 52px 70px 80px 90px;
+        column-gap: 14px;
       }
       .star { font-size: 2.2vw; }
     }
@@ -183,7 +183,7 @@
   <section class="honour-board">
     <h2 class="honour-title">HONOUR BOARD</h2>
 
-    <div class="champions-list" id="champions">
+    <div class="champions-list">
       <!-- 2024 -->
       <div class="champion-row">
         <span class="year">2024</span>
@@ -232,26 +232,6 @@
         document.getElementById("countdown").innerHTML = "TURNERINGEN HAR STARTET!";
       }
     }, 1000);
-
-    // Presis posisjonering: La ÅR starte der tittelen slutter.
-    function alignChampions() {
-      const section = document.querySelector('.honour-board');
-      const title = document.querySelector('.honour-title');
-      const list  = document.getElementById('champions');
-
-      const sectionW = section.clientWidth;
-      const titleW   = title.clientWidth;
-
-      // Høyrekant av tittelen relativt til seksjonen:
-      const titleRight = (sectionW - titleW) / 2 + titleW;
-
-      // Sett startpunktet for listen ved tittelens høyrekant
-      list.style.marginLeft = titleRight + 'px';
-      list.style.width = Math.max(0, sectionW - titleRight) + 'px';
-    }
-
-    window.addEventListener('load', alignChampions);
-    window.addEventListener('resize', alignChampions);
   </script>
 </body>
 </html>
