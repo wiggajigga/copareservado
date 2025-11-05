@@ -53,7 +53,6 @@ function bonusStars(count){
 }
 
 function compactRowHTML(code, name, d1p, d1b, d2p, d2b, d3p, d3b, total){
-  // Dag-celle: poeng + bonus-stjerner (gull)
   const d1 = (d1p + d1b).toFixed(1);
   const d2 = (d2p + d2b).toFixed(1);
   const d3 = (d3p + d3b).toFixed(1);
@@ -87,10 +86,9 @@ function renderCompactTable(players, names, d1, d2, d3){
     totals[p] = t1 + t2 + t3;
   });
 
-  // Sorter etter totals (desc), men vis fast rekkefølge om du ønsker – her sorterer vi.
   const order = [...players].sort((a,b)=> totals[b]-totals[a] || a.localeCompare(b));
 
-  order.forEach((p, idx)=>{
+  order.forEach((p)=>{
     tbody.insertAdjacentHTML("beforeend",
       compactRowHTML(
         p, names[p],
@@ -102,7 +100,6 @@ function renderCompactTable(players, names, d1, d2, d3){
     );
   });
 
-  // Marker leder (øverste rad)
   const firstRow = tbody.querySelector('tr');
   if (firstRow) firstRow.classList.add('leader');
 }
