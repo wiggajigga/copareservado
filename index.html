@@ -38,7 +38,7 @@
       margin-top: 20px;
     }
 
-    /* Current year badge */
+    /* Current year badge (moved under Honour Board) */
     .current-year-badge {
       margin-top: 30px;
       display: flex;
@@ -73,11 +73,10 @@
       margin-top: 60px;
       padding: 10px 20px 30px;
       width: 100%;
-      max-width: 600px; /* beholdt fra din fil */
+      max-width: 600px;
       text-align: center;
     }
 
-    /* Tittelen deler linjen i to – én linje (nowrap) og LENGRE streker */
     .honour-title {
       font-family: 'Microgramma', Arial, sans-serif;
       font-size: 2.5vw;
@@ -88,31 +87,28 @@
       align-items: center;
       justify-content: center;
       gap: 18px;
-      white-space: nowrap;          /* holder tittelen på én linje */
+      white-space: nowrap;
     }
     .honour-title::before,
     .honour-title::after {
       content: "";
       height: 1px;
-      flex: 1 1 320px;              /* lengre linjer på hver side */
+      flex: 1 1 320px;
       background: linear-gradient(to right, #ccc, #d4af37, #ccc);
       opacity: .85;
     }
 
-    /* Vinnerlisten: sentrert under tittelen og pent kolonnejustert */
     .champions-list {
-      margin: 0 auto;               /* midtstill under tittelen */
+      margin: 0 auto;
       display: grid;
-      /* Kolonner: ÅR | STREK | NAVN | STJERNER */
       grid-template-columns: 64px 92px 96px 110px;
-      column-gap: 18px;             /* litt mer space mellom år–strek–navn */
+      column-gap: 18px;
       row-gap: 12px;
       align-items: center;
-      justify-content: center;       /* behold sentrering som helhet */
+      justify-content: center;
       width: fit-content;
     }
 
-    /* Hver rad bruker grid-kolonnene over */
     .champion-row { display: contents; }
 
     .year {
@@ -124,7 +120,7 @@
 
     .divider {
       justify-self: center;
-      width: 100%;                   /* fyll kolonnen */
+      width: 100%;
       height: 1px;
       background: linear-gradient(to right, #ccc, #999, #ccc);
     }
@@ -136,10 +132,9 @@
       font-weight: 400;
     }
 
-    /* Stjerner – litt ekstra plass og midtstilt (omvendt “pyramide” når antallet øker) */
     .stars {
       justify-self: center;
-      min-width: 110px;              /* litt, men ikke mye, ekstra plass */
+      min-width: 110px;
       display: inline-flex;
       justify-content: center;
       gap: 2px;
@@ -147,7 +142,6 @@
     }
     .star { font-size: 1vw; color: #d4af37; }
 
-    /* Valgfri subtil hover på navne/stjerne-kolonnene */
     .champion-row:hover .winner-name,
     .champion-row:hover .stars { transform: translateX(4px); }
 
@@ -172,19 +166,12 @@
   <p>Est. 2021</p>
   <div id="countdown"></div>
 
-  <!-- Current Year (2025) Display -->
-  <div class="current-year-badge">
-    <span class="year-display">2025</span>
-    <span class="year-divider"></span>
-    <span class="year-winner">Fredrik Sagen Andersen</span>
-  </div>
-
   <!-- Hall of Champions (Previous Years) -->
   <section class="honour-board">
     <h2 class="honour-title">HONOUR BOARD</h2>
 
     <div class="champions-list">
-          <!-- 2025 -->
+      <!-- 2025 -->
       <div class="champion-row">
         <span class="year">2025</span>
         <span class="divider"></span>
@@ -222,21 +209,34 @@
     </div>
   </section>
 
+  <!-- Moved down: El campeón 2025 -->
+  <div class="current-year-badge" aria-label="El campeón 2025">
+    <span class="year-winner">El campeón</span>
+    <span class="year-display">2025</span>
+    <span class="year-divider"></span>
+    <span class="year-winner">Fredrik Sagen Andersen</span>
+  </div>
+
   <script>
-    // Nedtelling
-    var countDownDate = new Date("Nov 6, 2025 14:00:00").getTime();
+    // Nedtelling: Torsdag 5.11.2026 kl 13:00 (Spania) = 12:00 UTC
+    // ISO + Z gjør at nedtellingen blir korrekt uansett lokal tid hos brukeren.
+    var countDownDate = new Date("2026-11-05T12:00:00Z").getTime();
+
     var countdownfunction = setInterval(function() {
       var now = new Date().getTime();
       var distance = countDownDate - now;
+
       var days = Math.floor(distance / (1000 * 60 * 60 * 24));
       var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
       var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
       var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
       document.getElementById("countdown").innerHTML =
         days + "d " + hours + "h " + minutes + "m " + seconds + "s ";
+
       if (distance < 0) {
         clearInterval(countdownfunction);
-        document.getElementById("countdown").innerHTML = "El campeón";
+        document.getElementById("countdown").innerHTML = "Første utslag nå";
       }
     }, 1000);
   </script>
