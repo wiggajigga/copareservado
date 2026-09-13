@@ -60,3 +60,42 @@ Page sections top-to-bottom:
 - Stars (★) represent cumulative titles at that point in time
 - Winner names use initials in the grid, full name in the champion badge
 - Each row: `champion-row` with `display: contents` for flat grid layout
+
+## Data layer
+
+`data/` holds one file per edition. `copa.js` defines the registry and must
+load first; each `<år>.js` calls `COPA.register({...})`. Schema and rules are
+in `data/README.md`.
+
+```html
+<script src="/data/copa.js"></script>
+<script src="/data/2026.js"></script>
+```
+
+- `COPA.get(år)`, `COPA.alle()`, `COPA.spilte()`, `COPA.spillere()`
+- `COPA.honourBoard()` returns `{aar, vinner, titler}` newest first and
+  reproduces the hardcoded board in `index.html` exactly. When `index.html`
+  is made data-driven, generate from this rather than editing markup.
+- Missing data is `null`, never a guess. `status: 'ferdig'` is what puts a
+  year on the honour board.
+- Prices are per player including shared buggy.
+
+Backlog: `index.html` and `leaderboard/` still carry their own copies of the
+data. Migrate them onto `COPA` once 2021–2024 courses and results are filled in.
+
+## Year pages
+
+`<år>/index.html` is the planning page for an edition, rendered from
+`data/<år>.js`. No hardcoded course data in the markup.
+
+Voting runs on Supabase. `supabase/schema.sql` creates the table and its
+policies; `<år>/config.js` holds the project URL and anon key. The anon key
+belongs in the client — access is controlled by the policies, not by secrecy.
+With the config empty the page renders the courses and hides the voting
+columns, so it is always safe to ship.
+
+## Working over the device bridge
+
+Commands run in an isolated Linux VM that has no GitHub credentials and cannot
+delete files, so `git push` must be run from a normal terminal, and stale
+`.git/index.lock` files have to be moved aside rather than removed.
