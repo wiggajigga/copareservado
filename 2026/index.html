@@ -93,7 +93,7 @@
     overflow-x:auto;background:var(--card);border:1px solid var(--rule-2);border-radius:10px;
     box-shadow:0 2px 10px rgba(0,0,0,.04);
   }
-  table{border-collapse:collapse;width:100%;min-width:700px;font-size:14px;}
+  table{border-collapse:collapse;width:100%;min-width:660px;font-size:14px;}
   thead th{
     text-align:left;font-family:'Microgramma',Arial,sans-serif;font-size:9.5px;letter-spacing:1.5px;
     color:var(--ink-3);padding:13px 15px;border-bottom:1px solid var(--rule-2);white-space:nowrap;
@@ -105,6 +105,7 @@
   .bane{font-weight:bold;display:block;}
   .arch{font-size:12px;color:var(--ink-3);display:block;margin-top:2px;}
   .num,.pris{font-family:'Courier New',monospace;white-space:nowrap;}
+  .tee{white-space:normal;}
   .pris{font-weight:bold;}
   .status{
     display:inline-block;font-size:11px;font-weight:bold;padding:3px 9px;border-radius:3px;
@@ -114,11 +115,11 @@
   .status.warn{color:var(--warn);}
   .status.stop{color:var(--stop);}
 
-  th.cbane{width:26%;}
-  th.ctid{width:19%;}
-  th.cpris{width:13%;}
-  th.ckjor{width:10%;}
-  th.cstatus{width:16%;}
+  th.cbane{width:24%;}
+  th.ctid{width:20%;}
+  th.cpris{width:12%;}
+  th.ckjor{width:9%;}
+  th.cstatus{width:15%;}
   td:first-child{min-width:175px;}
   th.vcol,td.vcol{width:1%;}
   .votebtn{
@@ -257,7 +258,7 @@
     return '<tr data-bane="' + esc(k.bane) + '">' +
       '<td><span class="bane">' + esc(k.bane) + '</span>' +
           '<span class="arch">' + esc(undertekst) + '</span></td>' +
-      '<td class="num">' + esc(k.tee) + '</td>' +
+      '<td class="num tee">' + esc(k.tee) + '</td>' +
       '<td class="pris">' + pris + '</td>' +
       '<td class="num">' + k.kjoretid + ' min</td>' +
       '<td><span class="status ' + k.status + '">' + esc(k.merknad) + '</span></td>' +

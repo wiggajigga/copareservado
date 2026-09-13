@@ -38,6 +38,11 @@ Decorative lines use `linear-gradient(to right, #ccc, #d4af37, #ccc)`.
 Font file: `fonts/Microgramma Normal.ttf` (local, loaded via `@font-face`).
 Microgramma is used for brand elements; Courier New for data.
 
+**Microgramma has uppercase letters, digits and spaces only.** Lowercase and
+punctuation such as `·` render as nothing, silently, with no fallback. Any
+element set in Microgramma must contain only uppercase text. Put mixed-case
+copy, separators and anything with punctuation in Courier New or Arial.
+
 ### Sizing
 
 All font sizes use `vw` units for fluid scaling:
@@ -94,7 +99,11 @@ data. Migrate them onto `COPA` once 2021–2024 courses and results are filled i
 `data/<år>.js`. No hardcoded course data in the markup.
 
 Voting runs on Supabase. `supabase/schema.sql` creates the table and its
-policies; `<år>/config.js` holds the project URL and anon key. The anon key
+policies; `<år>/config.js` holds the project URL and anon key. The live project is
+`copa-reservado` (organisation Copa Reservado, free plan, Frankfurt), and
+`2026/config.js` carries its publishable key. The secret key stays in Supabase
+and never enters the repo. Votes cannot be deleted through the site by design —
+removing one means a `delete` in the SQL editor. The anon key
 belongs in the client — access is controlled by the policies, not by secrecy.
 With the config empty the page renders the courses and hides the voting
 columns, so it is always safe to ship.
