@@ -19,7 +19,7 @@ COPA.register({
     solnedgang: '18.18',          // 7. november, vintertid
     sisteLys: '18.45',            // borgerlig skumring
     sisteStart: '14.00',
-    beachclub: 'Nosso, Playa El Rosario (sesongen slutter 13. november)'
+    beachclub: 'Lunsj og premieutdeling på Nosso kl. 15, Playa El Rosario (sesongen slutter 13. november)'
   },
 
   runder: [
@@ -41,7 +41,9 @@ COPA.register({
         { bane: 'Calanova',     arkitekt: null, aapnet: null, beskrivelse: 'brede fairwayer, buggy inkludert',
           tee: '08.10 eller 14.50',              pris: 135, kjoretid: 18, status: 'warn', merknad: 'Ingen firerball 12 til 14' },
         { bane: 'El Chaparral', arkitekt: null, aapnet: null, beskrivelse: 'kort par 72 i pinjeskog, buggy inkludert',
-          tee: '08.00 eller fra 14.30',          pris: 123, kjoretid: 21, status: 'warn', merknad: 'Ingen firerball 12 til 14' }
+          tee: '08.00 eller fra 14.30',          pris: 123, kjoretid: 21, status: 'warn', merknad: 'Ingen firerball 12 til 14' },
+        { bane: 'Santana',           arkitekt: 'Cabell B. Robinson', aapnet: 2004, beskrivelse: 'flat, brede fairwayer, mest gåbare bane i utvalget',
+          tee: 'etter avtale',       pris: 135,   kjoretid: 22, status: 'warn', merknad: 'Ingen tider på nett 1. til 15. nov' }
       ]
     },
     {
@@ -70,14 +72,16 @@ COPA.register({
         { bane: 'La Hacienda Links', arkitekt: null, aapnet: null, beskrivelse: 'tidl. Alcaidesa, eneste ekte links på kysten, buggy inkludert',
           tee: '08.00 eller 13.24',  pris: 289,   kjoretid: 58, status: 'ok',   merknad: 'Ni tider' },
         { bane: 'San Roque Old',    arkitekt: 'Dave Thomas', aapnet: 1990, beskrivelse: 'bunkere omtegnet av Seve',
-          tee: '12.50 og utover',    pris: 300,   kjoretid: 65, status: 'ok',   merknad: '18 tider, buggy kommer i tillegg' }
+          tee: '12.50 og utover',    pris: 300,   kjoretid: 65, status: 'ok',   merknad: '18 tider, buggy kommer i tillegg' },
+        { bane: 'Santana',           arkitekt: 'Cabell B. Robinson', aapnet: 2004, beskrivelse: 'flat, brede fairwayer, mest gåbare bane i utvalget',
+          tee: 'etter avtale',       pris: 135,   kjoretid: 22, status: 'warn', merknad: 'Ingen tider på nett 1. til 15. nov' }
       ]
     },
     {
       dag: 3,
       dato: '2026-11-07',
       format: 'Lagmatch',
-      vindu: 'Ferdig senest 13.00, premieutdeling på Nosso',
+      vindu: 'Start senest 09.30, lunsj og premieutdeling på Nosso kl. 15',
       bane: null, tee: null, greenfee: null,
       kandidater: [
         { bane: 'Higuerón Marbella', arkitekt: null, aapnet: null, beskrivelse: 'tidl. Marbella Golf & Country Club, buggy inkludert',
@@ -85,13 +89,17 @@ COPA.register({
         { bane: 'Santa Clara',       arkitekt: 'Enrique Canales', aapnet: 2001, beskrivelse: 'buggy inkludert',
           tee: '08.10 / 08.20 / 08.30', pris: 190,  kjoretid: 10, status: 'warn', merknad: 'Bare tre tider' },
         { bane: 'Santa María',       arkitekt: null, aapnet: 1991, beskrivelse: 'i Elviria, early bird',
-          tee: '08.00',                pris: 107.5, kjoretid: 2,  status: 'ok',   merknad: 'Syv tider' },
+          tee: '08.00 til 09.20',      pris: 107.5, kjoretid: 2,  status: 'ok',   merknad: 'Syv tider' },
         { bane: 'Cabopino',          arkitekt: null, aapnet: 1999, beskrivelse: 'buggy inkludert',
           tee: '08.10 / 08.20',        pris: 108,   kjoretid: 8,  status: 'warn', merknad: 'Bare to tider' },
         { bane: 'Rio Real',          arkitekt: 'Javier Arana', aapnet: 1965, beskrivelse: 'flat, bred, gåbar',
           tee: '08.00',                pris: 171,   kjoretid: 12, status: 'ok',   merknad: 'Ledig' },
-        { bane: 'Atalaya Old',       arkitekt: 'Bernhard von Limburger', aapnet: 1968, beskrivelse: '30 min hver vei',
-          tee: '08.00 til 08.54',      pris: 153,   kjoretid: 30, status: 'warn', merknad: 'Strammest på tid' }
+        { bane: 'Atalaya Old',       arkitekt: 'Bernhard von Limburger', aapnet: 1968, beskrivelse: 'flat parkland',
+          tee: '08.00 til 08.54',      pris: 153,   kjoretid: 30, status: 'ok',   merknad: '14 tider' },
+        { bane: 'Guadalmina Sur',    arkitekt: 'Javier Arana', aapnet: 1959, beskrivelse: 'smal, gammel pinje',
+          tee: 'etter avtale',       pris: 202.5, kjoretid: 28, status: 'warn', merknad: 'Må ringes' },
+        { bane: 'Santana',           arkitekt: 'Cabell B. Robinson', aapnet: 2004, beskrivelse: 'flat, brede fairwayer, mest gåbare bane i utvalget',
+          tee: 'etter avtale',       pris: 135,   kjoretid: 22, status: 'warn', merknad: 'Ingen tider på nett 1. til 15. nov' }
       ]
     }
   ],
