@@ -3,6 +3,11 @@
 ## Git workflow
 
 - Work directly on `master` — no feature branches.
+- Check `git branch` before committing. The repo has been left in detached
+  HEAD by earlier worktree sessions; commits made there never reach `master`,
+  `git push origin master` reports "Everything up-to-date", and `git gc` can
+  discard them. Recover with `git checkout -B master <sha>` after confirming
+  `git merge-base --is-ancestor master HEAD`.
 - Commit and push to `master` immediately.
 - Do not create pull requests for this project.
 
