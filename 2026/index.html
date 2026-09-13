@@ -139,6 +139,34 @@
   body.novote th.vcol,body.novote td.vcol{display:none;}
   body.novote table{min-width:640px;}
 
+  .booket{
+    background:var(--card);border:1px solid var(--gold);border-radius:10px;
+    box-shadow:0 2px 10px rgba(0,0,0,.04);overflow:hidden;
+  }
+  .booket-topp{
+    display:flex;flex-wrap:wrap;align-items:baseline;gap:10px 14px;
+    padding:16px 20px;border-bottom:1px solid var(--rule-2);background:#fdf8e9;
+  }
+  .booket-merke{
+    font-family:'Microgramma',Arial,sans-serif;font-size:10px;letter-spacing:2px;
+    background:var(--gold);color:#fff;padding:4px 9px;border-radius:3px;
+  }
+  .booket-bane{font-size:19px;font-weight:bold;}
+  .booket-tee{font-family:'Courier New',monospace;color:var(--ink-2);margin-left:auto;}
+  .booket-fakta{margin:0;padding:6px 20px 16px;}
+  .booket-fakta div{display:flex;gap:14px;padding:9px 0;border-bottom:1px solid var(--rule-2);}
+  .booket-fakta div:last-child{border-bottom:none;}
+  .booket-fakta dt{
+    font-family:'Microgramma',Arial,sans-serif;font-size:9.5px;letter-spacing:1.5px;
+    color:var(--ink-3);flex:0 0 110px;padding-top:3px;
+  }
+  .booket-fakta dd{margin:0;font-size:14px;color:var(--ink);flex:1;min-width:0;}
+  @media (max-width:640px){
+    .booket-tee{margin-left:0;width:100%;}
+    .booket-fakta div{flex-direction:column;gap:3px;}
+    .booket-fakta dt{flex:none;}
+  }
+
   .basis{
     margin:44px auto 0;max-width:940px;font-size:12px;color:var(--ink-3);line-height:1.7;
     border-top:1px solid var(--rule);padding-top:16px;
@@ -261,6 +289,7 @@
 
   var html = '';
   t.runder.forEach(function(runde){
+    if(runde.booket){ html += booketRunde(runde); return; }
     html +=
       '<div class="section-title"><span>' + ROMERTALL[runde.dag] + '</span></div>' +
       '<p class="when">' + UKEDAG[runde.dag] + ' · ' + runde.format + ' · ' + runde.vindu + '</p>' +
@@ -273,6 +302,29 @@
       '</tbody></table></div>';
   });
   document.getElementById('runder').innerHTML = html;
+
+  function booketRunde(runde){
+    var b = runde.booket;
+    return '<div class="section-title"><span>' + ROMERTALL[runde.dag] + '</span></div>' +
+      '<p class="when">' + UKEDAG[runde.dag] + ' · ' + runde.format + '</p>' +
+      '<div class="booket">' +
+        '<div class="booket-topp"><span class="booket-merke">BOOKET</span>' +
+          '<span class="booket-bane">' + esc(runde.bane) + '</span>' +
+          '<span class="booket-tee">Utslag ' + esc(runde.tee) + '</span></div>' +
+        '<dl class="booket-fakta">' +
+          fakta('Pris', String(runde.greenfee).replace('.', ',') + ' € per spiller, ' + b.total + ' € totalt') +
+          fakta('Inkludert', b.inkludert) +
+          fakta('Oppmøte', 'Senest ' + b.oppmote + ', 15 minutter før utslag') +
+          fakta('Bane', b.adresse) +
+          fakta('Avbestilling', b.avbestilling) +
+          fakta('Handicap', b.hcpKrav) +
+        '</dl>' +
+      '</div>';
+  }
+
+  function fakta(navn, verdi){
+    return '<div><dt>' + esc(navn) + '</dt><dd>' + esc(verdi) + '</dd></div>';
+  }
 
   function esc(s){
     return String(s == null ? '' : s).replace(/[&<>"]/g, function(c){

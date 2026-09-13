@@ -51,7 +51,21 @@ COPA.register({
       dato: '2026-11-06',
       format: 'Skins',
       vindu: 'Fri tid, inntil to timers kjøring',
-      bane: null, tee: null, greenfee: null,
+      bane: 'El Chaparral',
+      tee: '09.00',
+      greenfee: 127,
+      booket: {
+        klubb: 'Chaparral Golf Club',
+        adresse: 'El Chaparral, N-340 km. 203, 29648 Mijas, Málaga',
+        bekreftet: '2026-09-13',
+        total: 508,
+        inkludert: 'Greenfee 18 hull og delt buggy, betalt i sin helhet',
+        oppmote: '08.45',
+        avbestilling: 'Senest tre dager før spilledag',
+        hcpKrav: 'Maks 28 for herrer, offisielt hcp-bevis kreves',
+        // Ordrereferanse og kontaktdata står i bookinger/, som er utenfor git
+        kvittering: 'bookinger/2026-11-06-el-chaparral-RJ8W6JM8.pdf'
+      },
       kandidater: [
         { bane: 'Guadalmina Sur',   arkitekt: 'Javier Arana', aapnet: 1959, beskrivelse: 'smal, gammel pinje',
           tee: 'etter avtale',       pris: 202.5, kjoretid: 28, status: 'warn', merknad: 'Må ringes' },
