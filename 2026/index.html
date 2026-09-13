@@ -114,6 +114,12 @@
   .status.warn{color:var(--warn);}
   .status.stop{color:var(--stop);}
 
+  th.cbane{width:26%;}
+  th.ctid{width:19%;}
+  th.cpris{width:13%;}
+  th.ckjor{width:10%;}
+  th.cstatus{width:16%;}
+  td:first-child{min-width:175px;}
   th.vcol,td.vcol{width:1%;}
   .votebtn{
     font-family:'Microgramma',Arial,sans-serif;font-size:10px;letter-spacing:1.5px;
@@ -227,11 +233,12 @@
   var html = '';
   t.runder.forEach(function(runde){
     html +=
-      '<div class="section-title"><span>' + ROMERTALL[runde.dag] + ' · ' + runde.format.toUpperCase() + '</span></div>' +
-      '<p class="when">' + UKEDAG[runde.dag] + ' · ' + runde.vindu + '</p>' +
+      '<div class="section-title"><span>' + ROMERTALL[runde.dag] + '</span></div>' +
+      '<p class="when">' + UKEDAG[runde.dag] + ' · ' + runde.format + ' · ' + runde.vindu + '</p>' +
       '<div class="tablewrap"><table><thead><tr>' +
-        '<th>Bane</th><th>Tid</th><th>Pris/spiller</th><th>Fra Elviria</th><th>Status</th>' +
-        '<th class="vcol">Velg</th><th class="vcol">Stemmer</th>' +
+        '<th class="cbane">BANE</th><th class="ctid">TID</th><th class="cpris">PRIS PR SPILLER</th>' +
+        '<th class="ckjor">FRA ELVIRIA</th><th class="cstatus">STATUS</th>' +
+        '<th class="vcol">VELG</th><th class="vcol">STEMMER</th>' +
       '</tr></thead><tbody data-dag="' + runde.dag + '">' +
         runde.kandidater.map(function(k){ return rad(runde.dag, k); }).join('') +
       '</tbody></table></div>';
