@@ -312,9 +312,10 @@
           '<span class="booket-bane">' + esc(runde.bane) + '</span>' +
           '<span class="booket-tee">Utslag ' + esc(runde.tee) + '</span></div>' +
         '<dl class="booket-fakta">' +
-          fakta('Pris', String(runde.greenfee).replace('.', ',') + ' € per spiller, ' + b.total + ' € totalt') +
+          fakta('Pris', runde.greenfee == null ? null :
+            String(runde.greenfee).replace('.', ',') + ' € per spiller' + (b.total ? ', ' + b.total + ' € totalt' : '')) +
           fakta('Inkludert', b.inkludert) +
-          fakta('Oppmøte', 'Senest ' + b.oppmote + ', 15 minutter før utslag') +
+          fakta('Oppmøte', b.oppmote ? 'Senest ' + b.oppmote + ', 15 minutter før utslag' : null) +
           fakta('Bane', b.adresse) +
           fakta('Avbestilling', b.avbestilling) +
           fakta('Handicap', b.hcpKrav) +
@@ -323,6 +324,7 @@
   }
 
   function fakta(navn, verdi){
+    if(verdi == null) return '';
     return '<div><dt>' + esc(navn) + '</dt><dd>' + esc(verdi) + '</dd></div>';
   }
 
