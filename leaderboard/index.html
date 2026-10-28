@@ -29,7 +29,8 @@
       font-family:'Microgramma', Arial, sans-serif;
       letter-spacing:2px;
     }
-    .year-card p{ margin:0; color:#777; }
+    .year-card p{ margin:0; color:#777; font-size:14px; }
+    .year-card .winner{ margin-top:8px; color:var(--gold); font-family:'Courier New', monospace; }
   </style>
 </head>
 <body class="lb-body">
@@ -38,13 +39,26 @@
 
     <div class="section-title"><span>YEAR</span></div>
 
-    <div class="year-grid">
-      <a class="year-card" href="./2025/">
-        <h2>2025</h2>
-        <p>Santa Clara · Alferini · Marbella Club</p>
-      </a>
-      <!-- Legg til flere år her etter hvert -->
-    </div>
+    <div class="year-grid" id="years"></div>
   </div>
+
+  <script src="/data/copa.js"></script>
+  <script src="/data/2024.js"></script>
+  <script src="/data/2025.js"></script>
+  <script src="/data/2026.js"></script>
+  <script>
+    (function () {
+      var esc = function (s) { return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) {
+        return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); };
+      var html = COPA.alle().map(function (t) {
+        var baner = (t.runder || []).map(function (r) { return r.bane; }).filter(Boolean);
+        var linje = baner.length ? baner.join(' · ') : 'Baner ikke bestemt';
+        var vinner = t.status === 'ferdig' && t.vinner ? '<p class="winner">' + esc(t.vinner) + '</p>' : '';
+        return '<a class="year-card" href="./' + t.aar + '/"><h2>' + t.aar + '</h2>' +
+               '<p>' + esc(linje) + '</p>' + vinner + '</a>';
+      }).join('');
+      document.getElementById('years').innerHTML = html;
+    })();
+  </script>
 </body>
 </html>

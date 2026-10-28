@@ -26,9 +26,10 @@ COPA.register({
     {
       dag: 1,
       dato: '2026-11-05',
-      format: 'Stableford',
+      format: 'Scramble',
+      beskrivelse: 'lagspill, lagene trekkes',
       vindu: 'Start mellom 12 og 14, nær Elviria',
-      bane: null, tee: null, greenfee: null,
+      bane: 'Cabopino', tee: null, greenfee: null,
       kandidater: [
         { bane: 'Rio Real',     arkitekt: 'Javier Arana', aapnet: 1965, beskrivelse: 'flat, bred, gåbar',
           tee: '11.20 / 12.30 / 13.10 / 13.50', pris: 166, kjoretid: 12, status: 'ok',   merknad: 'Fire firerball-tider' },
@@ -50,6 +51,7 @@ COPA.register({
       dag: 2,
       dato: '2026-11-06',
       format: 'Skins',
+      beskrivelse: 'individuelt, 4–3–2–1 etter flest skins',
       vindu: 'Fri tid, inntil to timers kjøring',
       bane: 'El Chaparral',
       tee: '09.00',
@@ -94,9 +96,10 @@ COPA.register({
     {
       dag: 3,
       dato: '2026-11-07',
-      format: 'Lagmatch',
+      format: 'Stableford',
+      beskrivelse: 'individuelt, fullt hcp',
       vindu: 'Start senest 09.30, lunsj og premieutdeling på Nosso kl. 15',
-      bane: null, tee: null, greenfee: null,
+      bane: 'Rio Real', tee: null, greenfee: null,
       kandidater: [
         { bane: 'Santa María',       arkitekt: null, aapnet: 1991, beskrivelse: 'i Elviria, early bird',
           tee: '08.00 til 09.20',      pris: 107.5, kjoretid: 2,  status: 'ok',   merknad: 'Sju tider, dyrere fra 09.00' },
@@ -133,6 +136,12 @@ COPA.register({
       ]
     }
   ],
+
+  // Formater og baner for dag 1 og 3 er forslag (oktober 2026): lagspill først, så to
+  // individuelle runder, slik at tittelen avgjøres av eget spill og ikke av lagtrekningen.
+  regler: {
+    notat: 'Formatene for dag 1 og 3 er forslag til gruppen har bestemt. Dag 2 er booket.'
+  },
 
   resultat: null,
   vinner: null,

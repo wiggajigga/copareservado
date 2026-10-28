@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Copa Reservado – Leaderboard 2024</title>
+  <link rel="stylesheet" href="../styles.css">
+</head>
+<body class="lb-body">
+  <div class="wrap">
+    <h1>LEADERBOARD 2024</h1>
+    <p class="sub"></p>
+
+    <div class="section-title section-title--overall"><span>OVERALL</span></div>
+
+    <table class="compact-board" id="compactTable">
+      <thead><tr></tr></thead>
+      <tbody></tbody>
+    </table>
+
+    <div class="rules"></div>
+
+    <p class="back"><a href="../">Alle år</a></p>
+  </div>
+
+  <script src="/data/copa.js"></script>
+  <script src="/data/2024.js"></script>
+  <script src="../leaderboard.js"></script>
+  <script> runLeaderboard(2024); </script>
+</body>
+</html>

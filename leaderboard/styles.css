@@ -131,3 +131,38 @@ html,body{
   .cb-col-d{ width: 18%; }
   .cb-col-total{ width: 19%; }
 }
+
+/* Kolonneoverskrifter med bane og format */
+.compact-board thead th .dag{ display:block; }
+.compact-board thead th .dag-info{
+  display:block; font-weight:400; font-size:12px; color:#999; white-space:normal; margin-top:2px;
+}
+.rules .note{ color:#999; font-style:italic; }
+.lb-body .back{ margin-top:30px; }
+.lb-body .back a{ color:#999; text-decoration:none; letter-spacing:1px; }
+.lb-body .back a:hover{ color:var(--gold); }
+
+/* Regler */
+.rules{ max-width:820px; margin:0 auto; color:#666; font-size:14px; line-height:1.6; text-align:left; }
+.rules p{ margin:0 0 8px; }
+.pill{
+  display:inline-block; padding:1px 8px; border-radius:999px;
+  border:1px solid var(--gold); color:#555; font-size:12px; white-space:nowrap;
+}
+
+/* Fullt navn på brede skjermer, kode på smale */
+.player-code{ display:none; }
+@media (max-width:640px){
+  .player-name{ display:none; }
+  .player-code{ display:block; }
+}
+@media (max-width:640px){
+  .compact-board{ table-layout:fixed; }
+  .compact-board thead th{ padding:10px 6px; font-size:13px; white-space:normal; }
+  .compact-board tbody td{ padding:10px 6px; font-size:15px; }
+  .compact-board thead th .dag-info{ font-size:11px; }
+  .cb-col-player{ width:30%; }
+  .cb-col-d{ width:17%; }
+  .cb-col-total{ width:19%; }
+  .cell-day .bonus{ margin-left:3px; font-size:11px; }
+}
